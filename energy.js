@@ -10,7 +10,7 @@ const SL02202346 = require('./SL02202346');
 const SL02202347 = require('./SL02202347');
 const SL02202348 = require('./SL02202348');
 
-
+const broker = 'mqtt://broker.emqx.io';
 
 
 // MQTT Broker Configuration
