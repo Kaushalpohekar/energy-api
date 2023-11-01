@@ -1,8 +1,20 @@
 const mqtt = require('mqtt');
 const { Pool } = require('pg'); // Use the 'pg' package for PostgreSQL
 
-// MQTT Broker Configuration
+const SL02202326 = require('./SL02202326');
+const SL02202328 = require('./SL02202328');
+const SL02202329 = require('./SL02202329');
+const SL02202344 = require('./SL02202344');
+const SL02202345 = require('./SL02202345');
+const SL02202346 = require('./SL02202346');
+const SL02202347 = require('./SL02202347');
+const SL02202348 = require('./SL02202348');
+
 const broker = 'mqtt://broker.emqx.io';
+
+
+// MQTT Broker Configuration
+
 const topic = 'MQTT/kapilansh';
 
 // PostgreSQL Database Configuration
