@@ -73,7 +73,7 @@ client.on('message', async (topic, message) => {
       try {
         const {
           device_uid, date_time, orp, pump_1, pump_2 } = mergedData;
-        const query = `INSERT INTO energy_database (device_uid, date_time, orp, pump_1, pump_2) VALUES (?, ?, ?, ?, ?)`;
+        const query = `INSERT INTO ORP_Meter (device_uid, orp, pump_1, pump_2) VALUES (?, ?, ?, ?, ?)`;
         const values = [device_uid, date_time, orp, pump_1, pump_2];
         
         dbConnection.query(query, values, (err, results) => {
