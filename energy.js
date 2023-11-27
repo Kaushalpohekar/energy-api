@@ -1,14 +1,14 @@
 const mqtt = require('mqtt');
 const { Pool } = require('pg'); // Use the 'pg' package for PostgreSQL
 
-const SL02202326 = require('./SL02202326');
-const SL02202328 = require('./SL02202328');
-const SL02202329 = require('./SL02202329');
-const SL02202344 = require('./SL02202344');
-const SL02202345 = require('./SL02202345');
-const SL02202346 = require('./SL02202346');
+//const SL02202326 = require('./SL02202326');
+//const SL02202328 = require('./SL02202328');
+//const SL02202329 = require('./SL02202329');
+//const SL02202344 = require('./SL02202344');
+//const SL02202345 = require('./SL02202345');
+//const SL02202346 = require('./SL02202346');
 const SL02202347 = require('./SL02202347');
-const SL02202348 = require('./SL02202348');
+//const SL02202348 = require('./SL02202348');
 
 const broker = 'mqtt://broker.emqx.io';
 
@@ -67,7 +67,7 @@ client.on('message', (topic, message) => {
   } catch (error) {
     // Handle the case where the message is not valid JSON (dummy data)
     const timeOfDummyData = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
-    console.log('Received message is not valid JSON:', message.toString(), timeOfDummyData);
+    //console.log('Received message is not valid JSON:', message.toString(), timeOfDummyData);
   }
 });
 

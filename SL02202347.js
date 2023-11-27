@@ -3,8 +3,8 @@ const mysql = require('mysql2');
 
 // MQTT Broker Configuration
 const broker = 'mqtt://broker.emqx.io';
-const topic1 = 'Energy/SenseLive/SL02202347/1';
-const topic2 = 'Energy/SenseLive/SL02202347/2';
+const topic1 = 'EnergyORP/SenseLive/SL02202347';
+const topic2 = 'EnergyCoilStatus/SenseLive/SL02202347';
 
 // Store data from both topics
 let dataFromTopic1 = null;
