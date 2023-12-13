@@ -10,7 +10,13 @@ const { Pool } = require('pg'); // Use the 'pg' package for PostgreSQL
 const SL02202347 = require('./SL02202347');
 //const SL02202348 = require('./SL02202348');
 
-const broker = 'mqtt://broker.emqx.io';
+const broker = 'mqtt://dashboard.senselive.in:1883';
+
+const options = {
+  username: 'Sense2023',
+  password: 'sense123',
+  clientId: 'kapilansh-mqtt'
+};
 
 
 // MQTT Broker Configuration
@@ -27,7 +33,7 @@ const dbConfig = {
 };
 
 // MQTT Client
-const client = mqtt.connect(broker);
+const client = mqtt.connect(broker,options);
 
 // Create a PostgreSQL connection pool
 const pool = new Pool(dbConfig);
@@ -58,6 +64,7 @@ client.on('message', (topic, message) => {
         if (error) {
           console.error('Error inserting data into the database:', error);
         } else {
+          console.log(data);
           console.log('Data inserted into the database.');
         }
       });
