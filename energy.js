@@ -7,7 +7,7 @@ const { Pool } = require('pg'); // Use the 'pg' package for PostgreSQL
 //const SL02202344 = require('./SL02202344');
 //const SL02202345 = require('./SL02202345');
 //const SL02202346 = require('./SL02202346');
-const SL02202347 = require('./SL02202347');
+//const SL02202347 = require('./SL02202347');
 //const SL02202348 = require('./SL02202348');
 
 const broker = 'mqtt://dashboard.senselive.in:1883';
