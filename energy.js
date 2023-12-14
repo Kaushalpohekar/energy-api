@@ -58,7 +58,6 @@ client.on('message', (topic, message) => {
     data = JSON.parse(message.toString());
 
     // Check if the received message has the correct API key
-    if (data.api_key === '2024') {
       // API key matches, insert the data into the PostgreSQL database
       insertDataIntoDatabase(data, (error) => {
         if (error) {
@@ -68,9 +67,6 @@ client.on('message', (topic, message) => {
           console.log('Data inserted into the database.');
         }
       });
-    } else {
-      console.log('Received message with invalid API key:', data.api_key);
-    }
   } catch (error) {
     // Handle the case where the message is not valid JSON (dummy data)
     const timeOfDummyData = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
