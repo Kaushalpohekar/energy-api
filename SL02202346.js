@@ -1,17 +1,24 @@
 const mqtt = require('mqtt');
 const mysql = require('mysql2');
+const moment = require('moment-timezone');
 
 // MQTT Broker Configuration
-const broker = 'mqtt://broker.emqx.io';
-const topic1 = 'Energy/SenseLive/SL02202346/1';
-const topic2 = 'Energy/SenseLive/SL02202346/2';
+const brokerOptions = {
+  host: 'dashboard.senselive.in',
+  port: 1883,
+  username: 'Sense2023',
+  password: 'sense123',
+  clientId: 'mqtt-subscriber46' // Set a unique client ID
+};
+const topic1 = 'Sense/Live/coil/SL02202347';
+const topic2 = 'Sense/Live/ORP/SL02202347';
 
 // Store data from both topics
 let dataFromTopic1 = null;
 let dataFromTopic2 = null;
 
 // MQTT Client
-const client = mqtt.connect(broker);
+const client = mqtt.connect(brokerOptions);
 
 // Subscribe to the MQTT topics
 client.on('connect', () => {
@@ -62,9 +69,10 @@ client.on('message', async (topic, message) => {
     // Check if all data sets are available and merge them into a single object
     if (dataFromTopic1 && dataFromTopic2) {
       const device_uid = data.device_uid;
+      //const date_time = moment().tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
       const mergedData = {
         device_uid, // Replace with your actual device UID
-        date_time: new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
+        date_time: moment().tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss'),
         ...dataFromTopic1,
         ...dataFromTopic2
       };
@@ -72,9 +80,9 @@ client.on('message', async (topic, message) => {
       // Insert the merged data into the MySQL database
       try {
         const {
-          device_uid, date_time, orp, pump_1, pump_2 } = mergedData;
-        const query = `INSERT INTO ORP_Meter (device_uid, orp, pump_1, pump_2) VALUES (?, ?, ?, ?, ?)`;
-        const values = [device_uid, date_time, orp, pump_1, pump_2];
+          device_uid, date_time, orp, pump1, pump2 } = mergedData;
+        const query = `INSERT INTO ORP_Meter (device_uid, date_time, orp, pump_1, pump_2) VALUES (?, ?, ?, ?, ?)`;
+        const values = [device_uid, date_time, orp, pump1, pump2];
         
         dbConnection.query(query, values, (err, results) => {
           if (err) {
