@@ -10,8 +10,8 @@ const brokerOptions = {
   password: 'sense123',
   clientId: 'mqtt-subscriber46' // Set a unique client ID
 };
-const topic1 = 'Sense/Live/coil/SL02202347';
-const topic2 = 'Sense/Live/ORP/SL02202347';
+const topic1 = 'Sense/Live/coil/SL02202346';
+const topic2 = 'Sense/Live/ORP/SL02202346';
 
 // Store data from both topics
 let dataFromTopic1 = null;
