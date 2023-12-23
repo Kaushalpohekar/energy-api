@@ -1,98 +1,156 @@
 const mqtt = require('mqtt');
-const mysql = require('mysql2');
+const { Client } = require('pg');
+const os = require('os');
 
-// MQTT Broker Configuration
-const broker = 'mqtt://broker.emqx.io';
-const topic1 = 'Energy/SenseLive/SL02202348/1';
-const topic2 = 'Energy/SenseLive/SL02202348/2';
+// MQTT broker URL
+const broker = 'ws://dashboard.senselive.in:9001';
 
-// Store data from both topics
-let dataFromTopic1 = null;
-let dataFromTopic2 = null;
+const options = {
+  username: 'Sense2023', // Replace with your MQTT broker username
+  password: 'sense123', // Replace with your MQTT broker password
+};
 
-// MQTT Client
-const client = mqtt.connect(broker);
+// PostgreSQL configuration
+const pgConfig = {
+  host: '64.227.181.131',
+  user: 'postgres',
+  password: 'iotsenselive',
+  database: 'senselive_db',
+  port: 12440,
+};
 
-// Subscribe to the MQTT topics
-client.on('connect', () => {
+// Create a PostgreSQL client
+const pgClient = new Client(pgConfig);
+
+// Connect to the PostgreSQL database
+pgClient.connect().then(() => {
+  console.log('Connected to PostgreSQL database');
+}).catch(error => {
+  console.error('Error connecting to PostgreSQL:', error);
+});
+
+// Connect to the MQTT broker
+const mqttClient = mqtt.connect(broker,options);
+
+// Handle MQTT connection event
+mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
-  client.subscribe([topic1, topic2], (err) => {
-    if (err) {
-      console.error('Error subscribing to topics:', err);
-    } else {
-      console.log(`Subscribed to topics: ${topic1}, ${topic2}`);
-    }
+
+  // Updated MQTT topics
+  const topics = Array.from({ length: 16 }, (_, i) => `Sense/Live/SL02202348/${i + 1}`);
+
+  topics.forEach((topic) => {
+    mqttClient.subscribe(topic, (error) => {
+      if (error) {
+        console.error(`Error subscribing to ${topic}:`, error);
+      } else {
+        console.log(`Subscribed to ${topic}`);
+      }
+    });
   });
 });
 
-// MySQL Database Configuration
-const dbConfig = {
-  host: 'senselivedb.cn5vfllmzwrp.ap-south-1.rds.amazonaws.com', // Replace with your MySQL host
-  user: 'admin', // Replace with your MySQL username
-  database: 'senselive_db', // Replace with your MySQL database name
-  password: 'sense!123', // Replace with your MySQL password
-  port: 3306, // Replace with your MySQL port
-};
+mqttClient.on('message', (topic, message) => {
+  try {
+    const data = JSON.parse(message);
 
-// Create a MySQL connection
-const dbConnection = mysql.createConnection(dbConfig);
 
-// Connect to the MySQL database
-dbConnection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL database:', err);
-  } else {
-    console.log('Connected to MySQL database');
+    // Insert data into PostgreSQL database
+    const insertQuery = `INSERT INTO ems.ems_live (
+      date_time, device_uid, voltage_1n, voltage_2n, voltage_3n, voltage_n, voltage_12, voltage_23, voltage_31, voltage_l, 
+      current_1, current_2, current_3, "current", kw_1, kw_2, kw_3, kvar_1, kvar_2, kvar_3, kva_1, kva_2, kva_3, pf_1, pf_2, pf_3, 
+      pf, freq, kw, kvar, kva, imp_kwh, exp_kwh, kwh, imp_kvarh, exp_kvarh, kvarh, kvah, thd_v1n, thd_v2n, thd_v3n, thd_v12, 
+      thd_v23, thd_v31, thd_i1, thd_i2, thd_i3, max_kw, min_kw, max_kvar, min_kvar, max_int_v1n, max_int_v2n, max_int_v3n, 
+      max_int_v12, max_int_v23, max_int_v31, max_kva, max_int_i1, max_int_i2, max_int_i3, run_h, on_h,ser_no
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, 
+      $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, 
+      $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64
+    )`;
+
+    const insertValues = [
+      data.date_time,
+      data.device_uid,
+      data.voltage_1n,
+      data.voltage_2n,
+      data.voltage_3n,
+      data.voltage_n,
+      data.voltage_12,
+      data.voltage_23,
+      data.voltage_31,
+      data.voltage_l,
+      data.current_1,
+      data.current_2,
+      data.current_3,
+      data.current,
+      data.kw_1,
+      data.kw_2,
+      data.kw_3,
+      data.kvar_1,
+      data.kvar_2,
+      data.kvar_3,
+      data.kva_1,
+      data.kva_2,
+      data.kva_3,
+      data.pf_1,
+      data.pf_2,
+      data.pf_3,
+      data.pf,
+      data.freq,
+      data.kw,
+      data.kvar,
+      data.kva,
+      data.imp_kwh,
+      data.exp_kwh,
+      data.kwh,
+      data.imp_kvarh,
+      data.exp_kvarh,
+      data.kvarh,
+      data.kvah,
+      data.thd_v1n,
+      data.thd_v2n,
+      data.thd_v3n,
+      data.thd_v12,
+      data.thd_v23,
+      data.thd_v31,
+      data.thd_i1,
+      data.thd_i2,
+      data.thd_i3,
+      data.max_kw,
+      data.min_kw,
+      data.max_kvar,
+      data.min_kvar,
+      data.max_int_v1n,
+      data.max_int_v2n,
+      data.max_int_v3n,
+      data.max_int_v12,
+      data.max_int_v23,
+      data.max_int_v31,
+      data.max_kva,
+      data.max_int_i1,
+      data.max_int_i2,
+      data.max_int_i3,
+      data.run_h,
+      data.on_h,
+      data.ser_no,
+    ];
+
+    pgClient.query(insertQuery, insertValues)
+      .then(() => {
+        console.log('Data inserted into PostgreSQL');
+      })
+      .catch((error) => {
+        console.error('Error inserting data into PostgreSQL:', error);
+      });
+  } catch (error) {
+    console.error('Error processing message:', error);
   }
 });
 
-client.on('message', async (topic, message) => {
-  let data;
+mqttClient.on('error', (error) => {
+  console.error('MQTT error:', error);
+});
 
-  try {
-    data = JSON.parse(message.toString());
-
-    // Store data based on the topic
-    if (topic === topic1) {
-      dataFromTopic1 = data;
-    } else if (topic === topic2) {
-      dataFromTopic2 = data;
-    }
-
-    // Check if all data sets are available and merge them into a single object
-    if (dataFromTopic1 && dataFromTopic2) {
-      const device_uid = data.device_uid;
-      const mergedData = {
-        device_uid, // Replace with your actual device UID
-        date_time: new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
-        ...dataFromTopic1,
-        ...dataFromTopic2
-      };
-
-      // Insert the merged data into the MySQL database
-      try {
-        const {
-          device_uid, date_time, orp, pump_1, pump_2 } = mergedData;
-        const query = `INSERT INTO ORP_Meter (device_uid, date_time, orp, pump_1, pump_2) VALUES (?, ?, ?, ?, ?)`;
-        const values = [device_uid, date_time, orp, pump_1, pump_2];
-        
-        dbConnection.query(query, values, (err, results) => {
-          if (err) {
-            console.error('Error inserting data into MySQL:', err);
-          } else {
-            console.log('Data inserted into MySQL database.');
-          }
-        });
-      } catch (err) {
-        console.error('Error inserting data into MySQL:', err);
-      }
-
-      // Reset data for the next round
-      dataFromTopic1 = null;
-      dataFromTopic2 = null;
-    }
-  } catch (error) {
-    // Handle the case where the message is not valid JSON (dummy data)
-    // console.log('Received message is not valid JSON:', message.toString());
-  }
+process.on('exit', () => {
+  pgClient.end();
 });

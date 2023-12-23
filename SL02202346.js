@@ -59,6 +59,7 @@ client.on('message', async (topic, message) => {
   try {
     data = JSON.parse(message.toString());
 
+    console
     // Store data based on the topic
     if (topic === topic1) {
       dataFromTopic1 = data;
