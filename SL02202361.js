@@ -36,6 +36,19 @@ const pgConfig = {
   port: 12440,
 };
 
+const topics = [
+  'Energy/Sense/Live/SL02202361/1', 'Energy/Sense/Live/SL02202361/2', 'Energy/Sense/Live/SL02202361/3',
+  'Energy/Sense/Live/SL02202361/4', 'Energy/Sense/Live/SL02202361/5', 'Energy/Sense/Live/SL02202361/6',
+  'Energy/Sense/Live/SL02202361/7', 'Energy/Sense/Live/SL02202361/8', 'Energy/Sense/Live/SL02202361/9',
+  'Energy/Sense/Live/SL02202361/10', 'Energy/Sense/Live/SL02202361/11', 'Energy/Sense/Live/SL02202361/12',
+  'Energy/Sense/Live/SL02202361/13', 'Energy/Sense/Live/SL02202361/14', 'Energy/Sense/Live/SL02202361/15',
+  'Energy/Sense/Live/SL02202361/16',
+];
+
+// Store data from all topics in an array
+let dataArrays = new Array(16).fill(null).map(() => []);
+
+
 // Create a PostgreSQL client
 const pgClient = new Client(pgConfig);
 
@@ -52,18 +65,13 @@ const mqttClient = mqtt.connect(broker,options);
 // Handle MQTT connection event
 mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
-
-  // Updated MQTT topics
-  const topics = Array.from({ length: 16 }, (_, i) => `Energy/Sense/Live/SL02202361/${i + 1}`);
-
-  topics.forEach((topic) => {
-    mqttClient.subscribe(topic, (error) => {
-      if (error) {
-        console.error(`Error subscribing to ${topic}:`, error);
-      } else {
-        console.log(`Subscribed to ${topic}`);
-      }
-    });
+  const topics = Array.from({ length: 16 }, (_, i) => `Energy/Sense/Live/SL02202329/${i + 1}`);
+  mqttClient.subscribe(topics, (err) => {
+    if (err) {
+      console.error('Error subscribing to topics:', err);
+    } else {
+      console.log('Subscribed to topics:', topics.join(', '));
+    }
   });
 
   
