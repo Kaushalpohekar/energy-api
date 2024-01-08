@@ -5,6 +5,23 @@ const os = require('os');
 // MQTT broker URL
 const broker = 'ws://dashboard.senselive.in:9001';
 
+const topic1 = 'Energy/SenseLive/SL02202361/1';
+const topic2 = 'Energy/SenseLive/SL02202361/2';
+const topic3 = 'Energy/SenseLive/SL02202361/3';
+const topic4 = 'Energy/SenseLive/SL02202361/4';
+const topic5 = 'Energy/SenseLive/SL02202361/5';
+const topic6 = 'Energy/SenseLive/SL02202361/6';
+const topic7 = 'Energy/SenseLive/SL02202361/7';
+const topic8 = 'Energy/SenseLive/SL02202361/8';
+const topic9 = 'Energy/SenseLive/SL02202361/9';
+const topic10 = 'Energy/SenseLive/SL02202361/10';
+const topic11 = 'Energy/SenseLive/SL02202361/11';
+const topic12 = 'Energy/SenseLive/SL02202361/12';
+const topic13 = 'Energy/SenseLive/SL02202361/13';
+const topic14 = 'Energy/SenseLive/SL02202361/14';
+const topic15 = 'Energy/SenseLive/SL02202361/15';
+const topic16 = 'Energy/SenseLive/SL02202361/16';
+
 const options = {
   username: 'Sense2023', // Replace with your MQTT broker username
   password: 'sense123', // Replace with your MQTT broker password
@@ -48,12 +65,51 @@ mqttClient.on('connect', () => {
       }
     });
   });
+
+  
 });
 
 mqttClient.on('message', (topic, message) => {
   try {
     const data = JSON.parse(message);
 
+    const dataFromTopic = [];
+
+    for (let i = 1; i <= topic.length; i++) {
+      if (topic === topic[i]) {
+        dataFromTopic[`dataFromTopic${i}`] = data;
+        break; 
+      }
+    }
+
+    // Check if all data sets are available and merge them into a single object
+    if (dataFromTopic1 && dataFromTopic2 && dataFromTopic3 && dataFromTopic4 && dataFromTopic5 && dataFromTopic6 && dataFromTopic7 
+      && dataFromTopic8 && dataFromTopic9 && dataFromTopic10 && dataFromTopic11 && dataFromTopic12 && dataFromTopic13 && dataFromTopic14 
+      && dataFromTopic15 && dataFromTopic16) {
+      const device_uid = data.device_uid;
+      const mergedData = {
+        device_uid, // Replace with your actual device UID
+        date_time: new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
+        ...dataFromTopic1,
+        ...dataFromTopic2,
+        ...dataFromTopic3,
+        ...dataFromTopic4,
+        ...dataFromTopic5,
+        ...dataFromTopic6,
+        ...dataFromTopic7,
+        ...dataFromTopic8,
+        ...dataFromTopic9,
+        ...dataFromTopic10,
+        ...dataFromTopic11,
+        ...dataFromTopic12,
+        ...dataFromTopic13,
+        ...dataFromTopic14,
+        ...dataFromTopic15,
+        ...dataFromTopic16,
+      };
+      console.log("Data merged")
+    }
+    
     const getMaxIdQuery = 'SELECT MAX(id) FROM public.energy_database';
 
     pgClient.query(getMaxIdQuery)
@@ -160,6 +216,3 @@ mqttClient.on('error', (error) => {
   console.error('MQTT error:', error);
 });
 
-process.on('exit', () => {
-  pgClient.end();
-});

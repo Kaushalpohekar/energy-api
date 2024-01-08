@@ -52,8 +52,8 @@ mqttClient.on('connect', () => {
 
 mqttClient.on('message', (topic, message) => {
   try {
-    const data = JSON.parse(message);
-
+    const data = JSON.parse(message.toString());
+    console.log(data);
     const getMaxIdQuery = 'SELECT MAX(id) FROM public.energy_database';
 
     pgClient.query(getMaxIdQuery)
