@@ -71,7 +71,7 @@ const insertQueryInEMS = `INSERT INTO ems_schema.ems_actual_data (
   current_1, current_2, current_3, current, kw_1, kw_2, kw_3, kvar_1, kvar_2, kvar_3, kva_1, kva_2, kva_3, pf_1, pf_2, pf_3, 
   pf, freq, kw, kvar, kva, imp_kwh, exp_kwh, kwh, imp_kvarh, exp_kvarh, kvarh, kvah, thd_v1n, thd_v2n, thd_v3n, thd_v12, 
   thd_v23, thd_v31, thd_i1, thd_i2, thd_i3, max_kw, min_kw, max_kvar, min_kvar, max_int_v1n, max_int_v2n, max_int_v3n, 
-  max_int_v12, max_int_v23, max_int_v31, max_kva, max_int_i1, max_int_i2, max_int_i3, run_h, on_h,ser_no, date_time
+  max_int_v12, max_int_v23, max_int_v31, max_kva, max_int_i1, max_int_i2, max_int_i3, run_h, on_h,ser_no,date_time
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, 
   $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, 
@@ -193,12 +193,10 @@ mqttClient.on('message', (topic, message) => {
           .catch((error) => {
             console.error('Error inserting data into db',error);
           });
-        });
-
+        })
 
         date_time = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
         const insertValuesInEMS = [ 
-          date_time, 
           receivedData.device_uid, 
           receivedData.V_1n,
           receivedData.V_2n,
@@ -264,14 +262,14 @@ mqttClient.on('message', (topic, message) => {
           receivedData.ser_no ]
           pgClient2.query(insertQueryInEMS,insertValuesInEMS)
           .then(() => {
-            console.log('Data inserted in db.');
+            console.log('Data inserted in OUR db.');
             receivedData = {};
           })
           .catch((error) => {
-            console.error('Error inserting data into db',error);
+            console.error('Error inserting data into OUR db',error);
           });
     } else {
-        console.log('Parameters processing...');
+        //console.log('Parameters processing...');
         // console.log(receivedData);
     }
 });
