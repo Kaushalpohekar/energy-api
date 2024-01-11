@@ -197,7 +197,6 @@ mqttClient.on('message', (topic, message) => {
 
         date_time = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
         const insertValuesInEMS = [ 
-          date_time, 
           receivedData.device_uid, 
           receivedData.V_1n,
           receivedData.V_2n,
