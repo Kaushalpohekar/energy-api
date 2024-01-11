@@ -193,8 +193,10 @@ mqttClient.on('message', (topic, message) => {
           .catch((error) => {
             console.error('Error inserting data into db',error);
           });
-        })
+        });
 
+        
+        date_time = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
         const insertValuesInEMS = [ 
           date_time, 
           receivedData.device_uid, 

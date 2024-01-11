@@ -270,7 +270,7 @@ mqttClient.on('message', (topic, message) => {
             console.error('Error inserting data into OUR db',error);
           });
     } else {
-        console.log('Parameters processing...');
+        //console.log('Parameters processing...');
         // console.log(receivedData);
     }
 });
