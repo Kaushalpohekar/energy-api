@@ -1,3 +1,4 @@
+
 const mqtt = require('mqtt');
 const { Client } = require('pg');
 
@@ -66,6 +67,7 @@ async function getNextId() {
 
 mqttClient.on('message', async (topic, message) => {
   try {
+    console.log(message);
     const data = JSON.parse(message.toString());
     dataFromTopics[topic] = data;
 
