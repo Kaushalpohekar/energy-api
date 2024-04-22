@@ -38,9 +38,9 @@ mqttClient.on('message', (topic, message) => {
       
       let canNumber = '';
       if (data.DeviceUID === 'SL02202410') {
-        canNumber = '033311359';
-      } else if (data.DeviceUID === 'SL02202411') {
         canNumber = '0331277923';
+      } else if (data.DeviceUID === 'SL02202411') {
+        canNumber = '033311359';
       }
 
       const formattedData = {
