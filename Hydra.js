@@ -36,8 +36,15 @@ mqttClient.on('message', (topic, message) => {
         hour12: false
       });
       
+      let canNumber = '';
+      if (data.DeviceUID === 'SL02202410') {
+        canNumber = '033311359';
+      } else if (data.DeviceUID === 'SL02202411') {
+        canNumber = '0331277923';
+      }
+
       const formattedData = {
-        "can_number": '111111111',
+        "can_number": canNumber,
         "mtr_number": data.DeviceUID,
         "reading": data.Totalizer || data.totalVolume || data.TemperatureR || data.Totalizer,
         "timestamp": timestamp.replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, '$2-$1-$3 $4:$5:$6')
