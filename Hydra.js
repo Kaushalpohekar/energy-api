@@ -39,7 +39,7 @@ mqttClient.on('message', (topic, message) => {
       const formattedData = {
         "can_number": '111111111',
         "mtr_number": data.DeviceUID,
-        "reading": data.totalizer || data.totalVolume || data.TemperatureR,
+        "reading": data.Totalizer || data.totalVolume || data.TemperatureR || data.Totalizer,
         "timestamp": timestamp.replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, '$2-$1-$3 $4:$5:$6')
       };
 
