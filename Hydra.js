@@ -43,7 +43,12 @@ mqttClient.on('message', (topic, message) => {
         canNumber = '033311359';
       }
 
-      const reading = (data.totalizer || data.totalVolume || data.Totalizer) / 100;
+      let reading = (data.totalizer || data.totalVolume || data.Totalizer);
+      if (data.DeviceUID === 'SL02202410') {
+        reading /= 100; // Divide by 100
+      } else if (data.DeviceUID === 'SL02202411') {
+        reading /= 1000; // Divide by 1000
+      }
 
       const formattedData = {
         "can_number": canNumber,
@@ -72,14 +77,4 @@ async function sendData(data) {
   
     try {
 //      https://mdm.hyderabadwater.gov.in/apis/api-testing.json
-      const response = await axios.post('https://mdm.hyderabadwater.gov.in/apis/api-testing.json', jsonData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      console.log('Data sent successfully:', response.data);
-    } catch (error) {
-      console.error('Error sending data:', error);
-    }
-  }
+      const response =
