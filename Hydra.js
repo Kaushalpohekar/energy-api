@@ -77,4 +77,14 @@ async function sendData(data) {
   
     try {
 //      https://mdm.hyderabadwater.gov.in/apis/api-testing.json
-      const response =
+      const response = await axios.post('https://mdm.hyderabadwater.gov.in/apis/api-testing.json', jsonData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      console.log('Data sent successfully:', response.data);
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
+}
