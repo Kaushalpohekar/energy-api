@@ -37,9 +37,9 @@ mqttClient.on('message', (topic, message) => {
       });
       
       let canNumber = '';
-      if (data.DeviceUID === 'SL02202410') {
-        canNumber = '0331277923';
-      } else if (data.DeviceUID === 'SL02202411') {
+      if (data.DeviceUID === 'SL02202411') {
+        canNumber = '033127923';
+      } else if (data.DeviceUID === 'SL02202410') {
         canNumber = '033311359';
       }
 
@@ -50,6 +50,7 @@ mqttClient.on('message', (topic, message) => {
         "timestamp": timestamp.replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, '$2-$1-$3 $4:$5:$6')
       };
 
+      console.log(formattedData);
       sendData(formattedData); // Call sendData immediately after formatting the data
     }
   } catch (error) {
