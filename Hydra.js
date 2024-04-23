@@ -43,7 +43,7 @@ mqttClient.on('message', (topic, message) => {
         canNumber = '033311359';
       }
 
-      const reading = (data.totalizer || data.totalVolume || data.Totalizer) / 1000;
+      const reading = (data.totalizer || data.totalVolume || data.Totalizer) / 100;
 
       const formattedData = {
         "can_number": canNumber,
