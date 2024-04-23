@@ -43,10 +43,12 @@ mqttClient.on('message', (topic, message) => {
         canNumber = '033311359';
       }
 
+      const reading = (data.totalizer || data.totalVolume || data.Totalizer) / 1000;
+
       const formattedData = {
         "can_number": canNumber,
         "mtr_number": data.DeviceUID,
-        "reading": data.Totalizer || data.totalVolume || data.TemperatureR || data.Totalizer,
+        "reading": reading,
         "timestamp": timestamp.replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, '$2-$1-$3 $4:$5:$6')
       };
 
