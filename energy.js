@@ -1,14 +1,5 @@
 const mqtt = require('mqtt');
-const { Pool } = require('pg'); // Use the 'pg' package for PostgreSQL
-
-//const SL02202326 = require('./SL02202326');
-//const SL02202328 = require('./SL02202328');
-//const SL02202329 = require('./SL02202329');
-//const SL02202344 = require('./SL02202344');
-//const SL02202345 = require('./SL02202345');
-//const SL02202346 = require('./SL02202346');
-//const SL02202347 = require('./SL02202347');
-//const SL02202348 = require('./SL02202348');
+const { Pool } = require('pg');
 
 const broker = 'mqtt://dashboard.senselive.in:1883';
 
@@ -18,24 +9,17 @@ const options = {
   clientId: 'kapilansh-mqtt'
 };
 
-
-// MQTT Broker Configuration
-
 const topic = 'MQTT/kapilansh';
-
-// PostgreSQL Database Configuration
 const dbConfig = {
-  host: '64.227.181.131',
+  host: '3.110.101.216',
   user: 'postgres',
-  password: 'iotsenselive',
-  database: 'senselive_db',
-  port: 12440, // Change the port to your PostgreSQL port (5432 is the default)
+  password: 'sense123',
+  database: 'ems',
+  port: 5432,
 };
 
-// MQTT Client
 const client = mqtt.connect(broker,options);
 
-// Create a PostgreSQL connection pool
 const pool = new Pool(dbConfig);
 
 // Subscribe to the MQTT topic
@@ -78,7 +62,7 @@ client.on('message', (topic, message) => {
 function insertDataIntoDatabase(data, callback) {
   // Fetch the latest entry ID from the database
   pool.query(
-    'SELECT MAX(id) FROM energy_database',
+    'SELECT MAX(id) FROM ems_schema.ems_actual_data',
     (error, results) => {
       if (error) {
         callback(error);
@@ -90,7 +74,7 @@ function insertDataIntoDatabase(data, callback) {
 
         const values = [
           newId, // Use the new ID as the insertion ID
-          new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
+          new Date(),
           data.device,
           data.voltage_1n,
           data.voltage_2n,
@@ -105,7 +89,7 @@ function insertDataIntoDatabase(data, callback) {
         }
 
         pool.query(
-          'INSERT INTO energy_database (id, date_time, device_uid, voltage_1n, voltage_2n, voltage_3n) VALUES ($1, $2, $3, $4, $5, $6)',
+          'INSERT INTO ems_schema.ems_actual_data (id, date_time, device_uid, voltage_1n, voltage_2n, voltage_3n) VALUES ($1, $2, $3, $4, $5, $6)',
           values, // Make sure all six values are provided
           (error, results) => {
             if (error) {
