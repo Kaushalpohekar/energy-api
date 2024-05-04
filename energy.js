@@ -60,45 +60,29 @@ client.on('message', (topic, message) => {
 
 // Function to insert data into the PostgreSQL database with a callback
 function insertDataIntoDatabase(data, callback) {
-  // Fetch the latest entry ID from the database
+  const values = [
+    new Date(),
+    data.device,
+    data.voltage_1n,
+    data.voltage_2n,
+    data.voltage_3n,
+  ];
+
+  // If any of the values is undefined, replace it with 0
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] === undefined) {
+      values[i] = 0;
+    }
+  }
+
   pool.query(
-    'SELECT MAX(id) FROM ems_schema.ems_actual_data',
+    'INSERT INTO ems_schema.ems_actual_data (date_time, device_uid, voltage_1n, voltage_2n, voltage_3n) VALUES ($1, $2, $3, $4, $5)',
+    values,
     (error, results) => {
       if (error) {
         callback(error);
       } else {
-        const latestId = results.rows[0].max || 0; // Get the latest ID or default to 0 if no records exist
-
-        // Increment the latest ID by one to use it as the new insertion ID
-        const newId = latestId + 1;
-
-        const values = [
-          newId, // Use the new ID as the insertion ID
-          new Date(),
-          data.device,
-          data.voltage_1n,
-          data.voltage_2n,
-          data.voltage_3n,
-        ];
-
-        // If any of the values is undefined, replace it with 0
-        for (let i = 2; i < values.length - 1; i++) {
-          if (values[i] === undefined) {
-            values[i] = 0;
-          }
-        }
-
-        pool.query(
-          'INSERT INTO ems_schema.ems_actual_data (id, date_time, device_uid, voltage_1n, voltage_2n, voltage_3n) VALUES ($1, $2, $3, $4, $5, $6)',
-          values, // Make sure all six values are provided
-          (error, results) => {
-            if (error) {
-              callback(error);
-            } else {
-              callback(null);
-            }
-          }
-        );
+        callback(null);
       }
     }
   );
