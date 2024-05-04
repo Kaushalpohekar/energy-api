@@ -66,8 +66,7 @@ const requiredParameters =['device_uid', 'V_1n', 'V_2n', 'V_3n', 'V_N', 'V_12','
   $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65
 )`;
 
-const insertQueryInEMS = `INSERT INTO ems_schema.ems_actual_data (
-  id, device_uid, voltage_1n, voltage_2n, voltage_3n, voltage_n, voltage_12, voltage_23, voltage_31, voltage_l, 
+const insertQueryInEMS = `INSERT INTO ems_schema.ems_actual_data (device_uid, voltage_1n, voltage_2n, voltage_3n, voltage_n, voltage_12, voltage_23, voltage_31, voltage_l, 
   current_1, current_2, current_3, current, kw_1, kw_2, kw_3, kvar_1, kvar_2, kvar_3, kva_1, kva_2, kva_3, pf_1, pf_2, pf_3, 
   pf, freq, kw, kvar, kva, imp_kwh, exp_kwh, kwh, imp_kvarh, exp_kvarh, kvarh, kvah, thd_v1n, thd_v2n, thd_v3n, thd_v12, 
   thd_v23, thd_v31, thd_i1, thd_i2, thd_i3, max_kw, min_kw, max_kvar, min_kvar, max_int_v1n, max_int_v2n, max_int_v3n, 
