@@ -64,7 +64,7 @@ async function checkAndUpdateDevices() {
 }
 
 // Schedule the task to run every 5 seconds
-cron.schedule('*/5 * * * * *', () => {
+cron.schedule('*/10 * * * * *', () => {
   // Get the current date and time
   const currentTime = new Date();
   
@@ -75,6 +75,7 @@ cron.schedule('*/5 * * * * *', () => {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    second: '2-digit',
     hour12: true
   });
 
