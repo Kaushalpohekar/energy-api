@@ -62,22 +62,21 @@ async function checkAndUpdateDevices() {
   }
 }
 
-// Call the function immediately or with a delay
-setTimeout(() => {
-    // Get the current date and time
-    const currentTime = new Date();
-    
-    // Format the date and time to "Aug 28, 2024 04:00 PM"
-    const formattedTime = currentTime.toLocaleString('en-US', {
-      month: 'short',
-      day: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
+// Run the script every 5 seconds
+setInterval(() => {
+  // Get the current date and time
+  const currentTime = new Date();
   
-    console.log("Script is Running at the Time", formattedTime);
-    checkAndUpdateDevices().catch(console.error);
-  }, 1000);
-  
+  // Format the date and time to "Aug 28, 2024 04:00 PM"
+  const formattedTime = currentTime.toLocaleString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+
+  console.log("Script is Running at the Time", formattedTime);
+  checkAndUpdateDevices().catch(console.error);
+}, 5000); // 5000 milliseconds = 5 seconds
