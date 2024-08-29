@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+const cron = require('node-cron');
 
 // Database connection
 const dbConfig = {
@@ -62,8 +63,8 @@ async function checkAndUpdateDevices() {
   }
 }
 
-// Run the script every 5 seconds
-setInterval(() => {
+// Schedule the task to run every 5 seconds
+cron.schedule('*/5 * * * * *', () => {
   // Get the current date and time
   const currentTime = new Date();
   
@@ -79,4 +80,4 @@ setInterval(() => {
 
   console.log("Script is Running at the Time", formattedTime);
   checkAndUpdateDevices().catch(console.error);
-}, 5000); // 5000 milliseconds = 5 seconds
+});
