@@ -30,7 +30,7 @@ const mqttClient = mqtt.connect(broker, options);
 
 mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
-  mqttClient.subscribe('TN-08:D1:F9:A7:56:B4/status/#', (error) => {
+  mqttClient.subscribe('TN-08:D1:F9:A7:56:B4/data/#', (error) => {
     if (error) {
       console.error('Error subscribing to topics:', error);
     } else {
