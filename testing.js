@@ -45,7 +45,7 @@ mqttClient.on('message', (topic, message) => {
 
     console.log('Data Collected For Device', data.ID);
 
-    const insertQuery = `INSERT INTO ad (DeviceUID, Timestamp, Width) VALUES ($1, $2, $3)`;
+    const insertQuery = `INSERT INTO ems_schema.Testing (DeviceUID, Timestamp, Width) VALUES ($1, $2, $3)`;
 
     const insertValues = [
       data.ID,                      // DeviceUID
