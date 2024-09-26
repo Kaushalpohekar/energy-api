@@ -17,7 +17,7 @@ const topic = 'MQTT/kapilansh';
 //   database: 'ems',
 //   port: 5432,
 // };
-const pgConfig2 = {
+const dbConfig = {
   host: '3.110.101.216',
   user: 'postgres',
   password: 'sense123',
