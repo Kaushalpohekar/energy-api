@@ -24,21 +24,21 @@ pgClient.connect((err) => {
     console.log('Connected to PostgreSQL database');
 });
 
-// const pgConfig2 = {
-//   host: 'pgsql.senselive.in',
-//   user: 'senselive',
-//   password: 'SenseLive',
-//   database: 'ems',
-//   port: 5432,
-// };
-
 const pgConfig2 = {
-  host: '3.110.101.216',
-  user: 'postgres',
-  password: 'sense123',
+  host: 'pgsql.senselive.in',
+  user: 'senselive',
+  password: 'SenseLive',
   database: 'ems',
   port: 5432,
 };
+
+// const pgConfig2 = {
+//   host: '3.110.101.216',
+//   user: 'postgres',
+//   password: 'sense123',
+//   database: 'ems',
+//   port: 5432,
+// };
 
 
 const pgClient2 = new Client(pgConfig2);
