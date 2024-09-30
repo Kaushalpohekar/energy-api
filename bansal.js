@@ -37,7 +37,7 @@ mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
   
   // Subscribe to the bansal_wire/plc topic
-  mqttClient.subscribe('bansal_wire/PLC', (error) => {
+  mqttClient.subscribe('bansal_wire/#', (error) => {
     if (error) {
       console.error('Error subscribing to bansal_wire/plc topic:', error);
     } else {
