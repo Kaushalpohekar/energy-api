@@ -4,7 +4,7 @@ const { Client } = require('pg');
 const broker = 'ws://dashboard.senselive.in:9001';
 
 const pgConfig2 = {
-  host: 'pgsql.senselive.in',
+  host: '13.126.174.172',
   user: 'senselive',
   password: 'SenseLive',
   database: 'ems',
