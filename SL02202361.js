@@ -25,7 +25,7 @@ pgClient.connect((err) => {
 });
 
 const pgConfig2 = {
-  host: '13.126.174.172',
+  host: 'pgsql.senselive.in',
   user: 'senselive',
   password: 'SenseLive',
   database: 'ems',
