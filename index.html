@@ -31,7 +31,7 @@
       const endDate = urlParams.get('end_date') || '2024-12-31'; // Default to '2024-12-31'
       
       // Fetch the data from the backend API with the start and end dates
-      fetch(`http://localhost:9000/get-data?start_date=${startDate}&end_date=${endDate}`, {
+      fetch(`http://pgsql.senselive.in:9000/get-data?start_date=${startDate}&end_date=${endDate}`, {
         method: 'GET',
         headers: {
           'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ1c2VyIiwiaWF0IjoxNzMxMTQ3MTE0LCJleHAiOjE3MzExNTA3MTR9.frNE6ahQhALaY06jQyvYk0MjcHEvg5j3tsHBi_hmQVo'  // You should replace this with the actual token
