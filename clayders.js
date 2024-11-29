@@ -54,7 +54,7 @@ const fetchSourceData = async () => {
     LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
     WHERE s.form_id = 'd891e2d8-eded-4688-8936-ee79c8b8d562'
       AND s.status = 'approved'
-      AND s.created_at >= NOW() - INTERVAL '60 HOURS'
+      AND s.created_at >= NOW() - INTERVAL '1000 HOURS'
     GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
     ORDER BY s.start_date;
   `;
@@ -117,29 +117,29 @@ const insertIntoDest = async (data) => {
 };
 
 // Set up the cron job to run every 10 minutes
-const job = new cron.CronJob('*/10 * * * *', async () => {
-  console.log('Running cron job to fetch and insert data...');
-  try {
-    const data = await fetchSourceData();
-    await insertIntoDest(data);
-    console.log('Data inserted successfully.');
-  } catch (error) {
-    console.error('Error during cron job execution:', error);
-  }
-});
+// const job = new cron.CronJob('*/10 * * * *', async () => {
+//   console.log('Running cron job to fetch and insert data...');
+//   try {
+//     const data = await fetchSourceData();
+//     await insertIntoDest(data);
+//     console.log('Data inserted successfully.');
+//   } catch (error) {
+//     console.error('Error during cron job execution:', error);
+//   }
+// });
 
 
-// // Set up the cron job to run every 5 seconds
-// const job = new cron.CronJob('*/10 * * * * *', async () => {
-//     console.log('Running cron job to fetch and insert data...');
-//     try {
-//       const data = await fetchSourceData();
-//       await insertIntoDest(data);
-//       console.log('Data inserted successfully.');
-//     } catch (error) {
-//       console.error('Error during cron job execution:', error);
-//     }
-//   });
+// Set up the cron job to run every 5 seconds
+const job = new cron.CronJob('*/10 * * * * *', async () => {
+    console.log('Running cron job to fetch and insert data...');
+    try {
+      const data = await fetchSourceData();
+      await insertIntoDest(data);
+      console.log('Data inserted successfully.');
+    } catch (error) {
+      console.error('Error during cron job execution:', error);
+    }
+  });
   
 // Start the cron job
 job.start();
