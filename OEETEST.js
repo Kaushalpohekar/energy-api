@@ -33,7 +33,7 @@ mqttClient.on('connect', () => {
   
   mqttClient.subscribe('machine/data/OEETEST', (error) => {
     if (error) {
-      console.error('Error subscribing to bansal_wire/plc topic:', error);
+      console.error('Error subscribing to topic:', error);
     } else {
       console.log('Subscribed to bansal_wire/PLC topic');
     }
