@@ -19,28 +19,43 @@ let lastMonthProduction = 0; // Store last month's production for condition 4
 let emergencyTimer = 0; // Track emergency timing for condition 7
 let lastBobbinChangeTime = Date.now(); // Track time for bobbin change condition
 let lastE_DT_Status = ""; // Track last E_DT set to 1
+let thisMonthProduction = 0; // Store this month's production
+let lastProductionUpdateTime = Date.now(); // Store the last production update time
+let actualPorduction = 0;
 
 function generateMachineTestData() {
   const targetSpeed = 30.0; // Condition 10: Constant target speed
   const mcStatus = Math.random() < 0.7 ? 1 : 0; // Machine status (1 running, 0 stopped)
 
   // Condition 1: Act Speed depends on MC Status and cannot exceed target speed
-  let actSpeed = mcStatus === 0 ? 0 : +(Math.random() * targetSpeed).toFixed(2);
+  let actSpeed = 0;
+  let activeTime = 0;
+  const activeDuration = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
 
-  // Condition 2: Only one block is active at a time, with actSpeed = 0
+  // If the machine is active, ensure it stays active for at least 12 hours of the day
+  if (mcStatus === 1) {
+    // If it's within the 12-hour active period
+    const currentTime = Date.now();
+    if (currentTime - lastBobbinChangeTime < activeDuration) {
+      actSpeed = +(Math.random() * targetSpeed).toFixed(2);
+      activeTime = currentTime;
+    } else {
+      // Reset if the 12 hours have passed
+      actSpeed = 0;
+    }
+  }
+
+  // Block handling: no block should halt the process
   const activeBlock = Math.floor(Math.random() * 7) + 1;
   const blocks = Array.from({ length: 7 }, (_, i) => i + 1).reduce((acc, num) => {
-    acc[`Block${num} Door Ground`] = num === activeBlock;
+    acc[`Block${num} Door Ground`] = actSpeed > 0 && num === activeBlock;
     acc[`Block${num} JOG FWD`] = false;
     acc[`Block${num} JOG REV`] = false;
-    acc[`Block${num} Single/Multi`] = true;
+    acc[`Block${num} Single/Multi`] = false;
     acc[`Block${num} WBS`] = false;
     acc[`Block${num} Wire Size`] = +(2.5 + Math.random() * 2.5).toFixed(2); // Random between 2.5mm and 5mm
     return acc;
   }, {});
-  if (blocks[`Block${activeBlock} Door Ground`]) {
-    actSpeed = 0; // When any block is active, actSpeed is 0
-  }
 
   // Condition 3: Bobbin Former Change every 30 to 60 minutes
   const currentTime = Date.now();
@@ -52,15 +67,22 @@ function generateMachineTestData() {
 
   // Condition 4 & 5: Previous and This Month Production
   const previousMonthProduction = lastMonthProduction;
-  const thisMonthProduction = mcStatus === 1
-    ? lastMonthProduction + +(Math.random() * 100).toFixed(2)
-    : lastMonthProduction;
-  lastMonthProduction = thisMonthProduction;
 
+  // Ensure production doesn't reset unless it's a new month
   const isNewMonth = new Date().getDate() === 1;
-  if (isNewMonth) lastMonthProduction = 0;
+  if (isNewMonth) {
+    thisMonthProduction = 0;
+  }
 
-  // Condition 6: Speed Increase/Decrease
+  // Condition for increasing This Month Production by 5 * Act Speed
+  if (mcStatus === 1 && actSpeed > 0) {
+    thisMonthProduction += 5 * actSpeed;
+  } else if (!isNewMonth && Date.now() - lastProductionUpdateTime > 60000) { 
+    // Production update happens once every minute
+    lastProductionUpdateTime = Date.now();
+    thisMonthProduction += 5 * actSpeed; // Increase production by 5 * Act Speed every minute
+  }
+
   const speedIncrease = actSpeed < targetSpeed;
   const speedDecrease = actSpeed > 0 && actSpeed >= targetSpeed;
 
@@ -109,12 +131,23 @@ function generateMachineTestData() {
   o_dt["O_DT_POWER_CUT"] = 0;
   o_dt["O_DT_WATER_UNAVAILABLE"] = 0;
 
+  // M_DT fields (similar to O_DT, added for completeness)
+  const m_dt = Array.from({ length: 16 }).reduce((acc, _, i) => {
+    acc[`M_DT_${i + 10}`] = 0;
+    return acc;
+  }, {});
+  m_dt["M_DT_DRUM_ISSUE"] = 0;
+  m_dt["M_DT_GEAR_BEARING"] = 0;
+  m_dt["M_DT_GEAR_MAINTNANCE"] = 0;
+  m_dt["M_DT_MECHANICAL_MAINTNANACE"] = 0;
+  m_dt["M_DT_OIL_SEAL_LEAKAGE"] = 0;
+
   return {
     "Act Speed": actSpeed,
     "ACT_COLD_DIA": +(Math.random() * 3).toFixed(2), // Random diameter
     "Block 2 Wire Size": +(2.5 + Math.random() * 2.5).toFixed(2),
     "Block 6 Wire Size": +(2.5 + Math.random() * 2.5).toFixed(2),
-    "Block1 Doon Ground": blocks["Block1 Door Ground"],
+    "Block1 Door Ground": blocks["Block1 Door Ground"],
     "Block1 JOG FWD": blocks["Block1 JOG FWD"],
     "Block1 JOG REV": blocks["Block1 JOG REV"],
     "Block1 Single/Multi": blocks["Block1 Single/Multi"],
@@ -154,7 +187,7 @@ function generateMachineTestData() {
     "Block7 JOG REV": blocks["Block7 JOG REV"],
     "Block7 Single/Multi": blocks["Block7 Single/Multi"],
     "Block7 WBS": blocks["Block7 WBS"],
-    "Block7 Wire Size": +(2.5 + Math.random() * 2.5).toFixed(2),
+    "Block7 Wire Size": blocks["Block7 Wire Size"],
     "Break Release": false,
     "DIA SHEDULE": "5.5mm_To_3.10mm",
     "E_DT_10": e_dt_status["E_DT_BRAKE_SV"],
@@ -164,36 +197,11 @@ function generateMachineTestData() {
     "E_DT_14": e_dt_status["E_DT_LIMIT_SWITCH"],
     "E_DT_15": e_dt_status["E_DT_MOTOR_FAULT"],
     "E_DT_16": e_dt_status["E_DT_SENSOR_PROBLEM"],
-    "E_DT_8": 0,
-    "E_DT_9": 0,
-    "E_DT_BRAKE_SV": 0,
-    "E_DT_DANCER_ISSUE": 0,
-    "E_DT_DRIVE_FAULT": 0,
-    "E_DT_ELECRTICAL_MAINTNANCE": 0,
-    "E_DT_LIMIT_SWITCH": 0,
-    "E_DT_MOTOR_FAULT": 0,
-    "E_DT_SENSOR_PROBLEM": 0,
     "Emergency": emergency,
     "Fault Reset": true,
     "Inlet Wire Size": 8.0,
     "Length Reset": false,
     "LINE_SPEED": lineSpeed,
-    "M_DT_10": 0,
-    "M_DT_11": 0,
-    "M_DT_12": 0,
-    "M_DT_13": 0,
-    "M_DT_14": 0,
-    "M_DT_15": 0,
-    "M_DT_16": 0,
-    "M_DT_6": 0,
-    "M_DT_7": 0,
-    "M_DT_8": 0,
-    "M_DT_9": 0,
-    "M_DT_DRUM_ISSUE": 0,
-    "M_DT_GEAR_BEARING": 0,
-    "M_DT_GEAR_MAINTNANCE": 0,
-    "M_DT_MECHANICAL_MAINTNANACE": 0,
-    "M_DT_OIL_SEAL_LEAKAGE": 0,
     "MC_STATUS": mcStatus,
     "Motor 1 Current": motorData["Motor 1 Current"],
     "Motor 1 HZ": motorData["Motor 1 HZ"],
@@ -225,18 +233,7 @@ function generateMachineTestData() {
     "O_DT_OPERATOR_UNAVAILABLE": o_dt["O_DT_OPERATOR_UNAVAILABLE"],
     "O_DT_POWER_CUT": o_dt["O_DT_POWER_CUT"],
     "O_DT_WATER_UNAVAILABLE": o_dt["O_DT_WATER_UNAVAILABLE"],
-    "OPRATOR NO": "RL01",
-    "P_DT_13": 0,
-    "P_DT_14": 0,
-    "P_DT_15": 0,
-    "P_DT_16": 0,
     "P_DT_BOBIN_FORMER_CHANGE": P_DT_BOBIN_FORMER_CHANGE,
-    "P_DT_BOBIN_FORMER_UNAVAILABLE": 0,
-    "P_DT_COIL_CHANGE": 0,
-    "P_DT_COIL_UNAVAILABLE": 0,
-    "P_DT_DIE_CHANGE": 0,
-    "P_DT_DIE_UNAVAILABLE": 0,
-    "P_DT_WIRE_BRAKAGE": 0,
     "previous Month Production": previousMonthProduction,
     "Previous Shift Hours": 0.0,
     "Previous Shift Min": 0.0,
@@ -250,19 +247,21 @@ function generateMachineTestData() {
     "Start": mcStatus === 1,
     "Stop": mcStatus === 0,
     "Target Speed": targetSpeed,
-    "This Month Production": thisMonthProduction,
+    "This Month Production": actualPorduction + thisMonthProduction,
     "TOTAL_LENGTH": 0.0
   };
 }
 
-// Connect to MQTT broker
+console.log(generateMachineTestData());
+
+
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
 
   // Publish data to the topic every 5 seconds
   setInterval(() => {
     const machineData = generateMachineTestData();
-    console.log('Publishing data:', machineData);
+    actualPorduction = machineData['This Month Production'];
 
     // Send data as a JSON string to the MQTT broker
     client.publish(topic, JSON.stringify(machineData), { qos: 1 }, (err) => {
