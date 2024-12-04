@@ -1,7 +1,7 @@
 const mqtt = require('mqtt');
 
 // MQTT Broker details
-const brokerUrl = 'mqtt://broker.senselive.io';
+const brokerUrl = 'mqtt://dashboard.senselive.in';
 const port = 1883;
 const username = 'Sense2023';
 const password = 'sense123';
@@ -77,7 +77,7 @@ function generateMachineTestData() {
   // Condition for increasing This Month Production by 5 * Act Speed
   if (mcStatus === 1 && actSpeed > 0) {
     thisMonthProduction += 5 * actSpeed;
-  } else if (!isNewMonth && Date.now() - lastProductionUpdateTime > 60000) { 
+  } else if (!isNewMonth && Date.now() - lastProductionUpdateTime > 60000) {
     // Production update happens once every minute
     lastProductionUpdateTime = Date.now();
     thisMonthProduction += 5 * actSpeed; // Increase production by 5 * Act Speed every minute
@@ -253,6 +253,8 @@ function generateMachineTestData() {
 }
 
 console.log(generateMachineTestData());
+
+
 
 
 client.on('connect', () => {

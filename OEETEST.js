@@ -35,7 +35,7 @@ mqttClient.on('connect', () => {
     if (error) {
       console.error('Error subscribing to topic:', error);
     } else {
-      console.log('Subscribed to bansal_wire/PLC topic');
+      console.log('Subscribed to topic');
     }
   });
 });
