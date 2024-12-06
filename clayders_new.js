@@ -1,0 +1,151 @@
+const { Pool } = require('pg');
+const cron = require('cron');
+
+// Source Database Connection
+const sourcePool = new Pool({
+  user: 'postgres',
+  host: '3.110.101.216',
+  database: 'SWP',
+  password: 'sense123',
+  port: 5432,
+});
+
+// Destination Database Connection
+const destPool = new Pool({
+  user: 'senselive',
+  host: 'pgsql.senselive.in',
+  database: 'ems',
+  password: 'SenseLive',
+  port: 5432,
+});
+
+// Function to fetch data from source database
+const fetchSourceData = async () => {
+  const query = `
+    SELECT
+      s.submission_id,
+      s.start_date + s.start_time AS "start_date",
+      s.end_date + s.end_time AS "end_date",
+      s.status,
+      u1.first_name || ' ' || u1.last_name AS "requested_by",
+      u2.first_name || ' ' || u2.last_name AS "authorizer",
+      MAX(CASE WHEN q.question_id = '630f3b9c-21a4-4d63-a2b9-b4f403ad61c5' THEN a.answer_text END) AS "Shift",
+      MAX(CASE WHEN q.question_id = '3124626e-b709-44e9-a24a-5897d3b274e8' THEN a.answer_text END) AS "Shift Operator",
+      MAX(CASE WHEN q.question_id = 'cc56062c-5548-440a-a9aa-493e1c91bc1e' THEN a.answer_text END) AS "Headcount (in Nos.)",
+      MAX(CASE WHEN q.question_id = '7a172b72-36d4-470b-b167-d03facd5a0e0' THEN a.answer_text END) AS "Tonnes/Manpower",
+      MAX(CASE WHEN q.question_id = '4acb25b5-0836-4eaf-a7e9-0478409f4358' THEN a.answer_text END) AS "product/Batch Selection",
+      MAX(CASE WHEN q.question_id = 'c8eb0a7d-2a02-472d-8025-a6c9ecfc3545' THEN a.answer_text END) AS "Planned Production (in MT)",
+      MAX(CASE WHEN q.question_id = '4c8b3a72-602b-4c35-bbc0-6c2e0322ddc5' THEN a.answer_text END) AS "Actual Production (in MT)",
+      MAX(CASE WHEN q.question_id = '6fc54fcb-ee24-477f-8a25-6eb36f579f43' THEN a.answer_text END) AS "Mixer/Blender Running Hours (in hours)",
+      MAX(CASE WHEN q.question_id = '61d75af4-7329-4462-aa74-d8f1a4b53f1d' THEN a.answer_text END) AS "Energy Consumption (in KWH)",
+      MAX(CASE WHEN q.question_id = '76f072cb-fe61-4ac0-b8e6-d5e68f71aa69' THEN a.answer_text END) AS "No. of Product Changeover (in Nos)",
+      MAX(CASE WHEN q.question_id = '4c5dda94-5e77-47e5-a279-16996a830884' THEN a.answer_text END) AS "Changeover Time (in hours)",
+      MAX(CASE WHEN q.question_id = '06d4a479-2ce0-4b48-90cc-7254fb3b94c6' THEN a.answer_text END) AS "Setup Time (in hours)",
+      MAX(CASE WHEN q.question_id = 'ce3bcadc-df8d-4e37-9ef6-7f0396c4bc41' THEN a.answer_text END) AS "Testing Time (in hours)",
+      MAX(CASE WHEN q.question_id = 'da9225bd-2f0e-4b8a-95ef-5f14343a145d' THEN a.answer_text END) AS "Electical Breakdown Time (in hours)",
+      MAX(CASE WHEN q.question_id = 'e0917e24-51d8-4833-acfa-6d959a9309ab' THEN a.answer_text END) AS "Mechanical Breakdown Time (in hours)", 
+      MAX(CASE WHEN q.question_id = '7c826863-fa1c-4745-a198-a05839ec99fd' THEN a.answer_text END) AS "Unavailability of Raw Material (in hours)",
+      MAX(CASE WHEN q.question_id = 'e1c88bcd-506f-43a8-8a2d-bd0fdbeccbc0' THEN a.answer_text END) AS "QC others (in hours)",
+      MAX(CASE WHEN q.question_id = '1aa31219-70fc-4dd9-9081-e22f9780a276' THEN a.answer_text END) AS "Other Stoppages (in hours)",
+      MAX(CASE WHEN q.question_id = 'b3d83f9f-1ce0-46b4-a21e-b735229519a9' THEN a.answer_text END) AS "Loss Due To Absence of Worker (in MT)",
+      MAX(CASE WHEN q.question_id = '228f5837-c73d-4af9-a396-e6299051bde5' THEN a.answer_text END) AS "Rejected Production (in MT)",
+      MAX(CASE WHEN q.question_id = 'd3f434b6-b78f-4906-959b-0eb302ba171e' THEN a.answer_text END) AS "Reprocess Material (in MT)"
+    FROM public.submissions s
+    JOIN public.users u1 ON s.requested_by = u1.user_id
+    JOIN public.users u2 ON s.authorizer = u2.user_id
+    LEFT JOIN public.questions q ON q.form_id = s.form_id
+    LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
+    WHERE s.form_id = 'f5fa7297-62f1-4bae-99b7-f66276f257a6'
+      AND s.status = 'approved'
+      AND s.created_at >= NOW() - INTERVAL '1000 HOURS'
+    GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
+    ORDER BY s.start_date;
+  `;
+
+  const { rows } = await sourcePool.query(query);
+  return rows;
+};
+
+// Function to insert data into the destination database
+const insertIntoDest = async (data) => {
+  for (const row of data) {
+    const checkQuery = `SELECT 1 FROM clayders.clayders_oee_new WHERE submission_id = $1`;
+    const checkResult = await destPool.query(checkQuery, [row.submission_id]);
+
+    if (checkResult.rowCount === 0) {
+      // If not already present, insert the row
+      const insertQuery = `
+        INSERT INTO clayders.clayders_oee_new (
+          submission_id, start_date, end_date, status, requested_by, authorizer, shift, shift_operator,
+          headcount, "tonnes/manpower", "product/batch_selection", planned_production, actual_production, "mixer/blender running hour", energy_consumption,
+          product_changeovers, changeover_time, setup_time, testing_time, elec_breakdown_time, mech_breakdown_time, raw_material_unavailability,
+          qc_others, other_stoppages, loss_due_to_absence_of_worker, rejected_production, reprocess_material
+        )
+        VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27
+        )`;
+      const values = [
+        row.submission_id || null,
+        row.start_date || null,
+        row.end_date || null,
+        row.status || null,
+        row.requested_by || null,
+        row.authorizer || null,
+        row.Shift || null,
+        row["Shift Operator"] || null,
+        row["Headcount (in Nos.)"] || null,
+        row["Tonnes/Manpower"] || null,
+        row["product/Batch Selection"] || null,
+        row["Planned Production (in MT)"] || null,
+        row["Actual Production (in MT)"] || null,
+        row["Mixer/Blender Running Hours (in hours)"] || null,
+        row["Energy Consumption (in KWH)"] || null,
+        row["No. of Product Changeover (in Nos)"] || null,
+        row["Changeover Time (in hours)"] || null,
+        row["Setup Time (in hours)"] || null,
+        row["Testing Time (in hours)"] || null,
+        row["Electical Breakdown Time (in hours)"] || null,
+        row["Mechanical Breakdown Time (in hours)"] || null,
+        row["Unavailability of Raw Material (in hours)"] || null,
+        row["QC others (in hours)"] || null,
+        row["Other Stoppages (in hours)"] || null,
+        row["Loss Due To Absence of Worker (in MT)"] || null,
+        row["Rejected Production (in MT)"] || null,
+        row["Reprocess Material (in MT)"] || null
+      ];
+      await destPool.query(insertQuery, values);
+      console.log(`Data inserted for submission_id: ${row.submission_id}`);
+    } else {
+      //console.log("Data Avilable", checkResult.rowCount);
+      //console.log(`Data already available for submission_id: ${row.submission_id}`);
+    }
+  }
+};
+
+//Set up the cron job to run every 10 minutes
+const job = new cron.CronJob('*/10 * * * *', async () => {
+  console.log('Running cron job to fetch and insert data...');
+  try {
+    const data = await fetchSourceData();
+    await insertIntoDest(data);
+    console.log('Data inserted successfully.');
+  } catch (error) {
+    console.error('Error during cron job execution:', error);
+  }
+});
+
+
+// Set up the cron job to run every 5 seconds
+// const job = new cron.CronJob('*/10 * * * * *', async () => {
+//   console.log('Running cron job to fetch and insert data...');
+//   try {
+//     const data = await fetchSourceData();
+//     await insertIntoDest(data);
+//     console.log('Data inserted successfully.');
+//   } catch (error) {
+//     console.error('Error during cron job execution:', error);
+//   }
+// });
+
+// Start the cron job
+job.start();
