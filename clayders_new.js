@@ -57,7 +57,6 @@ const fetchSourceData = async () => {
     LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
     WHERE s.form_id = 'f5fa7297-62f1-4bae-99b7-f66276f257a6'
       AND s.status = 'approved'
-      AND s.created_at >= NOW() - INTERVAL '1000 HOURS'
     GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
     ORDER BY s.start_date;
   `;
@@ -65,6 +64,40 @@ const fetchSourceData = async () => {
   const { rows } = await sourcePool.query(query);
   return rows;
 };
+
+// Function to fetch data for monthly table from source database
+const fetchMonthlyData = async () => {
+  const query = `
+    SELECT
+      s.submission_id,
+      s.start_date + s.start_time AS "start_date",
+      s.end_date + s.end_time AS "end_date",
+      s.status,
+      u1.first_name || ' ' || u1.last_name AS "requested_by",
+      u2.first_name || ' ' || u2.last_name AS "authorizer",
+      MAX(CASE WHEN q.question_id = 'b56951e9-4f4a-4f65-81d0-880cd7a6f5d3' THEN a.answer_text END) AS "MONTH",
+      MAX(CASE WHEN q.question_id = '698308fe-9999-436d-bfea-49d124649fb8' THEN a.answer_text END) AS "5S SCORE",
+      MAX(CASE WHEN q.question_id = '9c44f6ad-8d6f-409d-9052-de7a1e45d956' THEN a.answer_text END) AS "SOFI REPORTING",
+      MAX(CASE WHEN q.question_id = 'b0c57b81-9b10-44e1-9b58-591c07001a8e' THEN a.answer_text END) AS "S7 REPORTING",
+      MAX(CASE WHEN q.question_id = '47709abe-b375-4d4c-afaa-d6f7fbdee834' THEN a.answer_text END) AS "VFL REPORTING",
+      MAX(CASE WHEN q.question_id = 'a312835f-1e4b-4d67-99d1-101a3c43e995' THEN a.answer_text END) AS "REJECTED MATERIAL (IN TON)(KQI 2)",
+      MAX(CASE WHEN q.question_id = '041170df-805b-4dc7-b85f-4133e5542d9a' THEN a.answer_text END) AS "RECYCLED MATERIAL (IN TON)(KQI 4)",
+      MAX(CASE WHEN q.question_id = '386cdec1-dcab-40f5-8d94-2da4f7eb79fd' THEN a.answer_text END) AS "EXPIRED MATERIAL IN WAREHOUSE (IN TON)(KQI 6)"
+    FROM public.submissions s
+    JOIN public.users u1 ON s.requested_by = u1.user_id
+    JOIN public.users u2 ON s.authorizer = u2.user_id
+    LEFT JOIN public.questions q ON q.form_id = s.form_id
+    LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
+    WHERE s.form_id = '897fea02-9719-45c3-8c08-3503934350d7'
+      AND s.status = 'approved'
+    GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
+    ORDER BY s.start_date;
+  `;
+
+  const { rows } = await sourcePool.query(query);
+  return rows;
+};
+
 
 // Function to insert data into the destination database
 const insertIntoDest = async (data) => {
@@ -122,6 +155,49 @@ const insertIntoDest = async (data) => {
   }
 };
 
+
+// Function to insert data into the monthly table
+const insertIntoMonthlyTable = async (data) => {
+  for (const row of data) {
+    const checkQuery = `SELECT 1 FROM clayders.clayders_monthly WHERE submission_id = $1`;
+    const checkResult = await destPool.query(checkQuery, [row.submission_id]);
+
+    if (checkResult.rowCount === 0) {
+      // If not already present, insert the row
+      const insertQuery = `
+        INSERT INTO clayders.clayders_monthly (
+          submission_id, start_date, end_date, status, requested_by, authorizer, month, "5s_score",
+          sofi_reporting, s7_reporting, vlf_reporting, rejected_material, recycled_material, expired_material
+        )
+        VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+        )
+      `;
+      const values = [
+        row.submission_id || null,
+        row.start_date || null,
+        row.end_date || null,
+        row.status || null,
+        row.requested_by || null,
+        row.authorizer || null,
+        row.MONTH || null,
+        row["5S SCORE"] || null,
+        row["SOFI REPORTING"] || null,
+        row["S7 REPORTING"] || null,
+        row["VFL REPORTING"] || null,
+        row["REJECTED MATERIAL (IN TON)(KQI 2)"] || null,
+        row["RECYCLED MATERIAL (IN TON)(KQI 4)"] || null,
+        row["EXPIRED MATERIAL IN WAREHOUSE (IN TON)(KQI 6)"] || null,
+      ];
+      await destPool.query(insertQuery, values);
+      console.log(`Data inserted for submission_id: ${row.submission_id}`);
+    } else {
+      console.log(`Data already exists for submission_id: ${row.submission_id}`);
+    }
+  }
+};
+
+
 //Set up the cron job to run every 10 minutes
 const job = new cron.CronJob('*/10 * * * *', async () => {
   console.log('Running cron job to fetch and insert data...');
@@ -135,12 +211,16 @@ const job = new cron.CronJob('*/10 * * * *', async () => {
 });
 
 
-// Set up the cron job to run every 5 seconds
+//Set up the cron job to run every 5 seconds
 // const job = new cron.CronJob('*/10 * * * * *', async () => {
 //   console.log('Running cron job to fetch and insert data...');
 //   try {
 //     const data = await fetchSourceData();
 //     await insertIntoDest(data);
+
+//     const monthlyData = await fetchMonthlyData();
+//     await insertIntoMonthlyTable(monthlyData);
+
 //     console.log('Data inserted successfully.');
 //   } catch (error) {
 //     console.error('Error during cron job execution:', error);
