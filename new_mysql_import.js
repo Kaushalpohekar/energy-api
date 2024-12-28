@@ -124,7 +124,7 @@ async function importCsv(filePath) {
   }
 }
 
-const filePath = 'E:/Project/energy-api/output.csv';
+const filePath = 'C:/Users/uder/Desktop/actual_data_202412271202.csv';
 console.log(`Starting CSV import for file: ${filePath}`);
 importCsv(filePath).then(() => {
   console.log('CSV import process completed.');
