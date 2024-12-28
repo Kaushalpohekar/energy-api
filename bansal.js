@@ -6,11 +6,12 @@ const broker = 'ws://dashboard.senselive.in:9001';
 
 // PostgreSQL connection configuration
 const pgConfig2 = {
-  host: 'pgsql.senselive.in',
-  user: 'senselive',
-  password: 'SenseLive',
+  host: 'senselive.postgres.database.azure.com',
+  user: 'kaushal',
+  password: 'Kaushal@123',
   database: 'ems',
   port: 5432,
+  ssl: { rejectUnauthorized: false },
 };
 
 // Connect to PostgreSQL
