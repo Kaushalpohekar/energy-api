@@ -12,11 +12,17 @@ const sourcePool = new Pool({
 
 // Destination Database Connection
 const destPool = new Pool({
-  user: 'senselive',
-  host: 'pgsql.senselive.in',
+  // user: 'senselive',
+  // host: 'pgsql.senselive.in',
+  // database: 'ems',
+  // password: 'SenseLive',
+  // port: 5432,
+  host: 'senselive.postgres.database.azure.com',
+  user: 'kaushal',
+  password: 'Kaushal@123',
   database: 'ems',
-  password: 'SenseLive',
   port: 5432,
+  ssl: { rejectUnauthorized: false },
 });
 
 // Function to fetch data from source database
