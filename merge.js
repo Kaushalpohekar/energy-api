@@ -3,10 +3,15 @@ const cron = require('node-cron');
 
 // Database connection
 const dbConfig = {
-  host: 'senso.senselive.in',
-  user: 'mysql',
-  password: 'sense!123',
-  database: 'tms'
+  // host: 'senso.senselive.in',
+  // user: 'mysql',
+  // password: 'sense!123',
+  // database: 'tms'
+  host: 'sl02-mysql.mysql.database.azure.com',
+  user: 'senselive',
+  password: 'SenseLive@2030',
+  database: 'tms',
+  ssl: { rejectUnauthorized: false },
 };
 
 async function checkAndUpdateDevices() {
@@ -81,16 +86,16 @@ async function updateUserDeviceStats() {
     const onlineUsersCount = onlineUsers[0].count;
     const offlineUsersCount = totalUsersCount - onlineUsersCount;
 
-     // Count admin users
-     const [adminUsers] = await connection.query('SELECT COUNT(*) AS count FROM tms_users WHERE UserType = "Admin"');
-     const adminUsersCount = adminUsers[0].count;
- 
-     // Count standard users
-     const [standardUsers] = await connection.query('SELECT COUNT(*) AS count FROM tms_users WHERE UserType = "Standard"');
-     const standardUsersCount = standardUsers[0].count;
+    // Count admin users
+    const [adminUsers] = await connection.query('SELECT COUNT(*) AS count FROM tms_users WHERE UserType = "Admin"');
+    const adminUsersCount = adminUsers[0].count;
 
-     const [totalOrganizations] = await connection.query('SELECT COUNT(DISTINCT CompanyEmail) AS count FROM tms_users');
-      const totalOrganizationsCount = totalOrganizations[0].count;
+    // Count standard users
+    const [standardUsers] = await connection.query('SELECT COUNT(*) AS count FROM tms_users WHERE UserType = "Standard"');
+    const standardUsersCount = standardUsers[0].count;
+
+    const [totalOrganizations] = await connection.query('SELECT COUNT(DISTINCT CompanyEmail) AS count FROM tms_users');
+    const totalOrganizationsCount = totalOrganizations[0].count;
 
     // Insert counts into tms_user_device_stats table
     await connection.query(
@@ -110,7 +115,7 @@ async function updateUserDeviceStats() {
 cron.schedule('*/10 * * * * *', () => {
   // Get the current date and time
   const currentTime = new Date();
-  
+
   // Format the date and time to "Aug 28, 2024 04:00 PM"
   const formattedTime = currentTime.toLocaleString('en-US', {
     month: 'short',
@@ -127,8 +132,8 @@ cron.schedule('*/10 * * * * *', () => {
 });
 
 cron.schedule('*/1 * * * *', () => {
-    const currentTime = new Date();
-  
+  const currentTime = new Date();
+
   // Format the date and time to "Aug 28, 2024 04:00 PM"
   const formattedTime = currentTime.toLocaleString('en-US', {
     month: 'short',
