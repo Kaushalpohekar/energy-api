@@ -12,17 +12,17 @@ const sourcePool = new Pool({
 
 // Destination Database Connection
 const destPool = new Pool({
-  // user: 'senselive',
-  // host: 'pgsql.senselive.in',
-  // database: 'ems',
-  // password: 'SenseLive',
-  // port: 5432,
-  host: 'senselive.postgres.database.azure.com',
-  user: 'kaushal',
-  password: 'Kaushal@123',
+  user: 'senselive',
+  host: 'pgsql.senselive.in',
   database: 'ems',
+  password: 'SenseLive',
   port: 5432,
-  ssl: { rejectUnauthorized: false },
+  // host: 'senselive.postgres.database.azure.com',
+  // user: 'kaushal',
+  // password: 'Kaushal@123',
+  // database: 'ems',
+  // port: 5432,
+  // ssl: { rejectUnauthorized: false },
 });
 
 // Function to fetch data from source database
@@ -104,6 +104,57 @@ const fetchMonthlyData = async () => {
   return rows;
 };
 
+
+const fetchBreakdownData = async () => {
+  // const query = `
+  //   SELECT
+  //     s.submission_id,
+  //     s.start_date + s.start_time AS "start_date",
+  //     s.end_date + s.end_time AS "end_date",
+  //     s.status,
+  //     u1.first_name || ' ' || u1.last_name AS "requested_by",
+  //     u2.first_name || ' ' || u2.last_name AS "authorizer",
+  //     MAX(CASE WHEN q.question_id = 'c50fd0d6-d7b9-4ce2-b367-8c87a85d971c' THEN a.answer_text END) AS "Shift",
+  //     MAX(CASE WHEN q.question_id = '9a5e4abd-e9b5-4083-9ba3-e997cc1e430c' THEN a.answer_text END) AS "Shift_Operator",
+  //     MAX(CASE WHEN q.question_id = 'a1097f47-afc5-4763-8afd-2090fee75bab' THEN a.answer_text END) AS "stoppage",
+  //     MAX(CASE WHEN q.question_id = '762e15d5-2f97-4f81-9bef-1fb63da24bb1' THEN a.answer_text END) AS "describe_the_stoppage"
+  //   FROM public.submissions s
+  //   JOIN public.users u1 ON s.requested_by = u1.user_id
+  //   JOIN public.users u2 ON s.authorizer = u2.user_id
+  //   LEFT JOIN public.questions q ON q.form_id = s.form_id
+  //   LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
+  //   WHERE s.form_id = 'e7aff97f-1b8b-487b-8553-cdeb46791770'
+  //     AND s.status = 'approved'
+  //   GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
+  //   ORDER BY s.start_date;
+  // `;
+  const query = `
+      SELECT
+      s.submission_id,
+      s.start_date + s.start_time AS "start_date",
+      s.end_date + s.end_time AS "end_date",
+      s.status,
+      u1.first_name || ' ' || u1.last_name AS "requested_by",
+      u2.first_name || ' ' || u2.last_name AS "authorizer",
+      MAX(CASE WHEN q.question_id = '1364a0d2-1610-43c2-9078-6544dffd7e7e' THEN a.answer_text END) AS "Shift",
+      MAX(CASE WHEN q.question_id = 'ad6cbc09-f9e1-40da-9f9c-5dde09d683d8' THEN a.answer_text END) AS "Shift_Operator",
+      MAX(CASE WHEN q.question_id = 'b7a50d84-9caf-4212-a691-03082b2eca98' THEN a.answer_text END) AS "Stoppage",
+      MAX(CASE WHEN q.question_id = '4974d06c-97d3-4315-a0eb-ed7c46d370b6' THEN a.answer_text END) AS "Department",
+      MAX(CASE WHEN q.question_id = 'e9bedc32-3510-4edb-b8aa-b90edad69d41' THEN a.answer_text END) AS "Describe_the_stopaage"
+    FROM public.submissions s
+    JOIN public.users u1 ON s.requested_by = u1.user_id
+    JOIN public.users u2 ON s.authorizer = u2.user_id
+    LEFT JOIN public.questions q ON q.form_id = s.form_id
+    LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
+    WHERE s.form_id = 'abba9c99-ba56-4aa0-bc51-d78bd372e37c'
+      AND s.status = 'approved'
+    GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
+    ORDER BY s.start_date;
+  `;
+
+  const { rows } = await sourcePool.query(query);
+  return rows;
+};
 
 // Function to insert data into the destination database
 const insertIntoDest = async (data) => {
@@ -203,35 +254,76 @@ const insertIntoMonthlyTable = async (data) => {
   }
 };
 
+const insertIntoBreakdownTable = async (data) => {
+  for (const row of data) {
+    const checkQuery = `SELECT 1 FROM clayders.clayders_brekdowns WHERE submission_id = $1`;
+    const checkResult = await destPool.query(checkQuery, [row.submission_id]);
+
+    if (checkResult.rowCount === 0) {
+      // If not already present, insert the row
+      const insertQuery = `
+        INSERT INTO clayders.clayders_brekdowns (
+          submission_id, start_date, end_date, status, requested_by, authorizer, "Shift",
+          "Shift_Operator", department, stoppage, describe_the_stoppage
+        )
+        VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+        )
+      `;
+      const values = [
+        row.submission_id || null,
+        row.start_date || null,
+        row.end_date || null,
+        row.status || null,
+        row.requested_by || null,
+        row.authorizer || null,
+        row["Shift"] || null,
+        row["Shift_Operator"] || null,
+        row["Stoppage"] || null,
+        row["Department"] || null,
+        row["Describe_the_stopaage"] || null
+      ];
+      await destPool.query(insertQuery, values);
+      console.log(`Data inserted for submission_id: ${row.submission_id}`);
+    } else {
+      console.log(`Data already exists for submission_id: ${row.submission_id}`);
+    }
+  }
+};
+
 
 //Set up the cron job to run every 10 minutes
-const job = new cron.CronJob('*/10 * * * *', async () => {
-  console.log('Running cron job to fetch and insert data...');
-  try {
-    const data = await fetchSourceData();
-    await insertIntoDest(data);
-    console.log('Data inserted successfully.');
-  } catch (error) {
-    console.error('Error during cron job execution:', error);
-  }
-});
-
-
-//Set up the cron job to run every 5 seconds
-// const job = new cron.CronJob('*/10 * * * * *', async () => {
+// const job = new cron.CronJob('*/10 * * * *', async () => {
 //   console.log('Running cron job to fetch and insert data...');
 //   try {
 //     const data = await fetchSourceData();
 //     await insertIntoDest(data);
-
-//     const monthlyData = await fetchMonthlyData();
-//     await insertIntoMonthlyTable(monthlyData);
-
 //     console.log('Data inserted successfully.');
 //   } catch (error) {
 //     console.error('Error during cron job execution:', error);
 //   }
 // });
+
+
+//Set up the cron job to run every 5 seconds
+const job = new cron.CronJob('*/10 * * * * *', async () => {
+  console.log('Running cron job to fetch and insert data...');
+  try {
+    const data = await fetchSourceData();
+    await insertIntoDest(data);
+
+    const monthlyData = await fetchMonthlyData();
+    await insertIntoMonthlyTable(monthlyData);
+
+
+    const breakdown = await fetchBreakdownData();
+    await insertIntoBreakdownTable(fetchBreakdownData);
+
+    console.log('Data inserted successfully.');
+  } catch (error) {
+    console.error('Error during cron job execution:', error);
+  }
+});
 
 // Start the cron job
 job.start();
