@@ -255,6 +255,7 @@ const insertIntoMonthlyTable = async (data) => {
 };
 
 const insertIntoBreakdownTable = async (data) => {
+  console.log(data);
   for (const row of data) {
     const checkQuery = `SELECT 1 FROM clayders.clayders_brekdowns WHERE submission_id = $1`;
     const checkResult = await destPool.query(checkQuery, [row.submission_id]);
@@ -316,8 +317,8 @@ const job = new cron.CronJob('*/10 * * * * *', async () => {
     await insertIntoMonthlyTable(monthlyData);
 
 
-    const breakdown = await fetchBreakdownData();
-    await insertIntoBreakdownTable(fetchBreakdownData);
+    const breakdownData = await fetchBreakdownData();
+    await insertIntoBreakdownTable(breakdownData);
 
     console.log('Data inserted successfully.');
   } catch (error) {
