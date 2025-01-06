@@ -32,7 +32,7 @@ const mqttClient = mqtt.connect(broker, options);
 mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
   
-  mqttClient.subscribe('machine/data/OEETEST', (error) => {
+  mqttClient.subscribe('machine/data/WIRESIMULATION', (error) => {
     if (error) {
       console.error('Error subscribing to topic:', error);
     } else {
