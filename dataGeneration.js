@@ -373,12 +373,12 @@ function generateMachineTestData() {
   }
 
   const blocks = Array.from({ length: 7 }, (_, i) => i + 1).reduce((acc, num) => {
-    acc[Block${num} Door Ground] = actSpeed > 0 && num === activeBlock;
-    acc[Block${num} JOG FWD] = false;
-    acc[Block${num} JOG REV] = false;
-    acc[Block${num} Single/Multi] = false;
-    acc[Block${num} WBS] = false;
-    acc[Block${num} Wire Size] = +(2.5 + Math.random() * 2.5).toFixed(2); // Random between 2.5mm and 5mm
+    acc[`Block${num} Door Ground`] = actSpeed > 0 && num === activeBlock;
+    acc[`Block${num} JOG FWD`] = false;
+    acc[`Block${num} JOG REV`] = false;
+    acc[`Block${num} Single/Multi`] = false;
+    acc[`Block${num} WBS`] = false;
+    acc[`Block${num} Wire Size`] = +(2.5 + Math.random() * 2.5).toFixed(2); // Random between 2.5mm and 5mm
     return acc;
   }, {});
 
@@ -441,14 +441,14 @@ function generateMachineTestData() {
 
   // Motor data
   const motorData = Array.from({ length: 7 }).reduce((acc, _, i) => {
-    acc[Motor ${i + 1} Current] = +(Math.random() * 0.1).toFixed(6); // Random current between 0 and 0.1
-    acc[Motor ${i + 1} HZ] = +(Math.random() * 100).toFixed(2); // Random HZ between 0 and 100
+    acc[`Motor ${i + 1} Current`] = +(Math.random() * 0.1).toFixed(6); // Random current between 0 and 0.1
+    acc[`Motor ${i + 1} HZ`] = +(Math.random() * 100).toFixed(2); // Random HZ between 0 and 100
     return acc;
   }, {});
 
   // O_DT fields
   const o_dt = Array.from({ length: 16 }).reduce((acc, _, i) => {
-    acc[O_DT_${i + 10}] = 0;
+    acc[`O_DT_${i + 10}`] = 0;
     return acc;
   }, {});
   o_dt["O_DT_AIR_UNAVAILABLE"] = 0;
