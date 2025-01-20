@@ -13,8 +13,11 @@ const topics = [
     'gauge/2b72d9a7-9c5d-4e6a-a234-b2e3f4c5d7e8/8c5bda9e-bf52-412e-a52e-96cb7b473c2f'
 ];
 
+// function generateRandomData() {
+//     return (Math.random() * (120 - 10) + 10).toFixed(2);
+// }
 function generateRandomData() {
-    return (Math.random() * (120 - 10) + 10).toFixed(2);
+  return (Math.random() * (12.50 - 10.50) + 10.50).toFixed(2);
 }
 
 function sendData() {
