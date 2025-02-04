@@ -1,28 +1,14 @@
 const { Pool } = require('pg');
 const cron = require('cron');
 
-// Source Database Connection
-const sourcePool = new Pool({
-  user: 'postgres',
-  host: '3.110.101.216',
-  database: 'SWP',
-  password: 'sense123',
-  port: 5432,
-});
-
 // Destination Database Connection
-const destPool = new Pool({
-  user: 'senselive',
-  host: 'pgsql.senselive.in',
+const sourcePool = new Pool({
+  host: 'senselive.postgres.database.azure.com',
+  user: 'kaushal',
+  password: 'Kaushal@123',
   database: 'ems',
-  password: 'SenseLive',
   port: 5432,
-  // host: 'senselive.postgres.database.azure.com',
-  // user: 'kaushal',
-  // password: 'Kaushal@123',
-  // database: 'ems',
-  // port: 5432,
-  // ssl: { rejectUnauthorized: false },
+  ssl: { rejectUnauthorized: false },
 });
 
 // Function to fetch data from source database
@@ -56,11 +42,11 @@ const fetchSourceData = async () => {
       MAX(CASE WHEN q.question_id = 'b3d83f9f-1ce0-46b4-a21e-b735229519a9' THEN a.answer_text END) AS "Loss Due To Absence of Worker (in MT)",
       MAX(CASE WHEN q.question_id = '228f5837-c73d-4af9-a396-e6299051bde5' THEN a.answer_text END) AS "Rejected Production (in MT)",
       MAX(CASE WHEN q.question_id = 'd3f434b6-b78f-4906-959b-0eb302ba171e' THEN a.answer_text END) AS "Reprocess Material (in MT)"
-    FROM public.submissions s
-    JOIN public.users u1 ON s.requested_by = u1.user_id
-    JOIN public.users u2 ON s.authorizer = u2.user_id
-    LEFT JOIN public.questions q ON q.form_id = s.form_id
-    LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
+    FROM swp.submissions s
+    JOIN swp.users u1 ON s.requested_by = u1.user_id
+    JOIN swp.users u2 ON s.authorizer = u2.user_id
+    LEFT JOIN swp.questions q ON q.form_id = s.form_id
+    LEFT JOIN swp.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
     WHERE s.form_id = 'f5fa7297-62f1-4bae-99b7-f66276f257a6'
       AND s.status = 'approved'
     GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
@@ -89,11 +75,11 @@ const fetchMonthlyData = async () => {
       MAX(CASE WHEN q.question_id = 'a312835f-1e4b-4d67-99d1-101a3c43e995' THEN a.answer_text END) AS "REJECTED MATERIAL (IN TON)(KQI 2)",
       MAX(CASE WHEN q.question_id = '041170df-805b-4dc7-b85f-4133e5542d9a' THEN a.answer_text END) AS "RECYCLED MATERIAL (IN TON)(KQI 4)",
       MAX(CASE WHEN q.question_id = '386cdec1-dcab-40f5-8d94-2da4f7eb79fd' THEN a.answer_text END) AS "EXPIRED MATERIAL IN WAREHOUSE (IN TON)(KQI 6)"
-    FROM public.submissions s
-    JOIN public.users u1 ON s.requested_by = u1.user_id
-    JOIN public.users u2 ON s.authorizer = u2.user_id
-    LEFT JOIN public.questions q ON q.form_id = s.form_id
-    LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
+    FROM swp.submissions s
+    JOIN swp.users u1 ON s.requested_by = u1.user_id
+    JOIN swp.users u2 ON s.authorizer = u2.user_id
+    LEFT JOIN swp.questions q ON q.form_id = s.form_id
+    LEFT JOIN swp.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
     WHERE s.form_id = '897fea02-9719-45c3-8c08-3503934350d7'
       AND s.status = 'approved'
     GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
@@ -118,11 +104,11 @@ const fetchBreakdownData = async () => {
   //     MAX(CASE WHEN q.question_id = '9a5e4abd-e9b5-4083-9ba3-e997cc1e430c' THEN a.answer_text END) AS "Shift_Operator",
   //     MAX(CASE WHEN q.question_id = 'a1097f47-afc5-4763-8afd-2090fee75bab' THEN a.answer_text END) AS "stoppage",
   //     MAX(CASE WHEN q.question_id = '762e15d5-2f97-4f81-9bef-1fb63da24bb1' THEN a.answer_text END) AS "describe_the_stoppage"
-  //   FROM public.submissions s
-  //   JOIN public.users u1 ON s.requested_by = u1.user_id
-  //   JOIN public.users u2 ON s.authorizer = u2.user_id
-  //   LEFT JOIN public.questions q ON q.form_id = s.form_id
-  //   LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
+  //   FROM swp.submissions s
+  //   JOIN swp.users u1 ON s.requested_by = u1.user_id
+  //   JOIN swp.users u2 ON s.authorizer = u2.user_id
+  //   LEFT JOIN swp.questions q ON q.form_id = s.form_id
+  //   LEFT JOIN swp.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
   //   WHERE s.form_id = 'e7aff97f-1b8b-487b-8553-cdeb46791770'
   //     AND s.status = 'approved'
   //   GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
@@ -142,11 +128,11 @@ const fetchBreakdownData = async () => {
       MAX(CASE WHEN q.question_id = '1f17c70f-6322-4ac4-a75b-ee38557ec4e8' THEN a.answer_text END) AS "Department",
       MAX(CASE WHEN q.question_id = '125babf0-ab98-45f7-b1fd-16444eee958d' THEN a.answer_text END) AS "Describe_the_stopaage",
       MAX(CASE WHEN q.question_id = '73e225fd-006e-48c1-a802-6dd40ce3c349' THEN a.answer_text END) AS "Duration"
-    FROM public.submissions s
-    JOIN public.users u1 ON s.requested_by = u1.user_id
-    JOIN public.users u2 ON s.authorizer = u2.user_id
-    LEFT JOIN public.questions q ON q.form_id = s.form_id
-    LEFT JOIN public.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
+    FROM swp.submissions s
+    JOIN swp.users u1 ON s.requested_by = u1.user_id
+    JOIN swp.users u2 ON s.authorizer = u2.user_id
+    LEFT JOIN swp.questions q ON q.form_id = s.form_id
+    LEFT JOIN swp.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
     WHERE s.form_id = 'd2feb706-6b79-4d07-b2ff-4d307974f973'
       AND s.status = 'approved'
     GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
@@ -161,7 +147,7 @@ const fetchBreakdownData = async () => {
 const insertIntoDest = async (data) => {
   for (const row of data) {
     const checkQuery = `SELECT 1 FROM clayders.clayders_oee_new WHERE submission_id = $1`;
-    const checkResult = await destPool.query(checkQuery, [row.submission_id]);
+    const checkResult = await sourcePool.query(checkQuery, [row.submission_id]);
 
     if (checkResult.rowCount === 0) {
       // If not already present, insert the row
@@ -204,7 +190,7 @@ const insertIntoDest = async (data) => {
         row["Rejected Production (in MT)"] || null,
         row["Reprocess Material (in MT)"] || null
       ];
-      await destPool.query(insertQuery, values);
+      await sourcePool.query(insertQuery, values);
       console.log(`Data inserted for submission_id: ${row.submission_id}`);
     } else {
       //console.log("Data Avilable", checkResult.rowCount);
@@ -218,7 +204,7 @@ const insertIntoDest = async (data) => {
 const insertIntoMonthlyTable = async (data) => {
   for (const row of data) {
     const checkQuery = `SELECT 1 FROM clayders.clayders_monthly WHERE submission_id = $1`;
-    const checkResult = await destPool.query(checkQuery, [row.submission_id]);
+    const checkResult = await sourcePool.query(checkQuery, [row.submission_id]);
 
     if (checkResult.rowCount === 0) {
       // If not already present, insert the row
@@ -247,7 +233,7 @@ const insertIntoMonthlyTable = async (data) => {
         row["RECYCLED MATERIAL (IN TON)(KQI 4)"] || null,
         row["EXPIRED MATERIAL IN WAREHOUSE (IN TON)(KQI 6)"] || null,
       ];
-      await destPool.query(insertQuery, values);
+      await sourcePool.query(insertQuery, values);
       console.log(`Data inserted for submission_id: ${row.submission_id}`);
     } else {
       console.log(`Data already exists for submission_id: ${row.submission_id}`);
@@ -259,7 +245,7 @@ const insertIntoBreakdownTable = async (data) => {
   console.log(data);
   for (const row of data) {
     const checkQuery = `SELECT 1 FROM clayders.clayders_brekdowns WHERE submission_id = $1`;
-    const checkResult = await destPool.query(checkQuery, [row.submission_id]);
+    const checkResult = await sourcePool.query(checkQuery, [row.submission_id]);
 
     if (checkResult.rowCount === 0) {
       // If not already present, insert the row
@@ -286,7 +272,7 @@ const insertIntoBreakdownTable = async (data) => {
         row["Describe_the_stopaage"] || null,
         row["Duration"] || null
       ];
-      await destPool.query(insertQuery, values);
+      await sourcePool.query(insertQuery, values);
       console.log(`Data inserted for submission_id: ${row.submission_id}`);
     } else {
       console.log(`Data already exists for submission_id: ${row.submission_id}`);
@@ -295,21 +281,9 @@ const insertIntoBreakdownTable = async (data) => {
 };
 
 
-//Set up the cron job to run every 10 minutes
-// const job = new cron.CronJob('*/10 * * * *', async () => {
-//   console.log('Running cron job to fetch and insert data...');
-//   try {
-//     const data = await fetchSourceData();
-//     await insertIntoDest(data);
-//     console.log('Data inserted successfully.');
-//   } catch (error) {
-//     console.error('Error during cron job execution:', error);
-//   }
-// });
-
-
 //Set up the cron job to run every 5 seconds
-const job = new cron.CronJob('*/10 * * * * *', async () => {
+//const job = new cron.CronJob('*/10 * * * * *', async () => {
+const job = new cron.CronJob('*/1 * * * *', async () => {
   console.log('Running cron job to fetch and insert data...');
   try {
     const data = await fetchSourceData();
