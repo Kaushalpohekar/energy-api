@@ -68,6 +68,11 @@ mqttClient.on('message', (topic, message) => {
     const localIpAddress = data.LocalIP || getLocalIp();
     const deviceStatus = data.status || data.Status || data.Error || data.error || 'online';
 
+    if (data.totalVolume === 0 || data.Totalizer === 0) {
+        //console.warn(`Skipping insertion for device ${deviceUID} because totalVolume is 0.`);
+        return;
+      }
+
     const insertQueryInEMS = `
       INSERT INTO tms.actual_data (
         deviceuid, timestamp, temperature, humidity, temperaturer, temperaturey, temperatureb, pressure, flowrate, totalvolume, ip_address, status
