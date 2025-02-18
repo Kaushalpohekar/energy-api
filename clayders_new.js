@@ -21,34 +21,34 @@ const fetchSourceData = async () => {
       s.status,
       u1.first_name || ' ' || u1.last_name AS "requested_by",
       u2.first_name || ' ' || u2.last_name AS "authorizer",
-      MAX(CASE WHEN q.question_id = '630f3b9c-21a4-4d63-a2b9-b4f403ad61c5' THEN a.answer_text END) AS "Shift",
-      MAX(CASE WHEN q.question_id = '3124626e-b709-44e9-a24a-5897d3b274e8' THEN a.answer_text END) AS "Shift Operator",
-      MAX(CASE WHEN q.question_id = 'cc56062c-5548-440a-a9aa-493e1c91bc1e' THEN a.answer_text END) AS "Headcount (in Nos.)",
-      MAX(CASE WHEN q.question_id = '7a172b72-36d4-470b-b167-d03facd5a0e0' THEN a.answer_text END) AS "Tonnes/Manpower",
-      MAX(CASE WHEN q.question_id = '4acb25b5-0836-4eaf-a7e9-0478409f4358' THEN a.answer_text END) AS "product/Batch Selection",
-      MAX(CASE WHEN q.question_id = 'c8eb0a7d-2a02-472d-8025-a6c9ecfc3545' THEN a.answer_text END) AS "Planned Production (in MT)",
-      MAX(CASE WHEN q.question_id = '4c8b3a72-602b-4c35-bbc0-6c2e0322ddc5' THEN a.answer_text END) AS "Actual Production (in MT)",
-      MAX(CASE WHEN q.question_id = '6fc54fcb-ee24-477f-8a25-6eb36f579f43' THEN a.answer_text END) AS "Mixer/Blender Running Hours (in hours)",
-      MAX(CASE WHEN q.question_id = '61d75af4-7329-4462-aa74-d8f1a4b53f1d' THEN a.answer_text END) AS "Energy Consumption (in KWH)",
-      MAX(CASE WHEN q.question_id = '76f072cb-fe61-4ac0-b8e6-d5e68f71aa69' THEN a.answer_text END) AS "No. of Product Changeover (in Nos)",
-      MAX(CASE WHEN q.question_id = '4c5dda94-5e77-47e5-a279-16996a830884' THEN a.answer_text END) AS "Changeover Time (in hours)",
-      MAX(CASE WHEN q.question_id = '06d4a479-2ce0-4b48-90cc-7254fb3b94c6' THEN a.answer_text END) AS "Setup Time (in hours)",
-      MAX(CASE WHEN q.question_id = 'ce3bcadc-df8d-4e37-9ef6-7f0396c4bc41' THEN a.answer_text END) AS "Testing Time (in hours)",
-      MAX(CASE WHEN q.question_id = 'da9225bd-2f0e-4b8a-95ef-5f14343a145d' THEN a.answer_text END) AS "Electical Breakdown Time (in hours)",
-      MAX(CASE WHEN q.question_id = 'e0917e24-51d8-4833-acfa-6d959a9309ab' THEN a.answer_text END) AS "Mechanical Breakdown Time (in hours)", 
-      MAX(CASE WHEN q.question_id = '7c826863-fa1c-4745-a198-a05839ec99fd' THEN a.answer_text END) AS "Unavailability of Raw Material (in hours)",
-      MAX(CASE WHEN q.question_id = 'e1c88bcd-506f-43a8-8a2d-bd0fdbeccbc0' THEN a.answer_text END) AS "QC others (in hours)",
-      MAX(CASE WHEN q.question_id = '1aa31219-70fc-4dd9-9081-e22f9780a276' THEN a.answer_text END) AS "Other Stoppages (in hours)",
-      MAX(CASE WHEN q.question_id = 'b3d83f9f-1ce0-46b4-a21e-b735229519a9' THEN a.answer_text END) AS "Loss Due To Absence of Worker (in MT)",
-      MAX(CASE WHEN q.question_id = '228f5837-c73d-4af9-a396-e6299051bde5' THEN a.answer_text END) AS "Rejected Production (in MT)",
-      MAX(CASE WHEN q.question_id = 'd3f434b6-b78f-4906-959b-0eb302ba171e' THEN a.answer_text END) AS "Reprocess Material (in MT)"
+      MAX(CASE WHEN q.question_id = '88f7420c-e4e4-4b7d-b124-2e5e6245f8d5' THEN a.answer_text END) AS "Shift",
+      MAX(CASE WHEN q.question_id = '4f5e52eb-97df-412a-8bfa-87a3eb3594cb' THEN a.answer_text END) AS "Shift Operator",
+      MAX(CASE WHEN q.question_id = 'a86d50f5-57a2-477e-9063-9d933d8157af' THEN a.answer_text END) AS "Headcount (in Nos.)",
+      MAX(CASE WHEN q.question_id = 'aa4c7b33-7de5-4991-84a4-adb3ad6301be' THEN a.answer_text END) AS "Tonnes/Manpower",
+      MAX(CASE WHEN q.question_id = '3f1623eb-3990-4140-97e6-eb2c28dfa2ef' THEN a.answer_text END) AS "product/Batch Selection",
+      MAX(CASE WHEN q.question_id = '6a545e4b-cd0e-43f5-97d4-44fdcd3e4644' THEN a.answer_text END) AS "Planned Production (in MT)",
+      MAX(CASE WHEN q.question_id = 'd85b818e-5c10-4f71-9763-e7608b1da45d' THEN a.answer_text END) AS "Actual Production (in MT)",
+      MAX(CASE WHEN q.question_id = '79dfe8f8-bf25-4914-8f00-4f4d747ae319' THEN a.answer_text END) AS "Mixer/Blender Running Hours (in hours)",
+      MAX(CASE WHEN q.question_id = '10276bc7-957d-4f5d-b419-c82f05b4a679' THEN a.answer_text END) AS "Energy Consumption (in KWH)",
+      MAX(CASE WHEN q.question_id = '6728727e-89a5-46c2-89a2-d80a60752999' THEN a.answer_text END) AS "No. of Product Changeover (in Nos)",
+      MAX(CASE WHEN q.question_id = 'b9322d7a-394f-4366-b9a2-0d6059602a99' THEN a.answer_text END) AS "Changeover Time (in hours)",
+      MAX(CASE WHEN q.question_id = '3e858bff-824e-4fa3-8fb6-87c573da64e1' THEN a.answer_text END) AS "Setup Time (in hours)",
+      MAX(CASE WHEN q.question_id = '324a981d-058b-4a73-b15b-8ddc09cf14f3' THEN a.answer_text END) AS "Testing Time (in hours)",
+      MAX(CASE WHEN q.question_id = 'ebef473f-814a-4a3b-bcad-3f51d6ba1dc5' THEN a.answer_text END) AS "Electical Breakdown Time (in hours)",
+      MAX(CASE WHEN q.question_id = 'ebbc6d40-44e3-4b66-94d3-d742523885a6' THEN a.answer_text END) AS "Mechanical Breakdown Time (in hours)", 
+      MAX(CASE WHEN q.question_id = '277bf217-919f-48a1-b8bb-97c7326cdf22' THEN a.answer_text END) AS "Unavailability of Raw Material (in hours)",
+      MAX(CASE WHEN q.question_id = 'd82baa14-24fa-410b-a606-8b32fae5cf82' THEN a.answer_text END) AS "QC others (in hours)",
+      MAX(CASE WHEN q.question_id = 'f8601c2a-277a-405f-a37c-fb3758aae88c' THEN a.answer_text END) AS "Other Stoppages (in hours)",
+      MAX(CASE WHEN q.question_id = 'a346f69f-da32-4e70-a8b9-5f7c647f4b91' THEN a.answer_text END) AS "Loss Due To Absence of Worker (in MT)",
+      MAX(CASE WHEN q.question_id = '435ec2a7-080f-49ee-9b18-7b49f8b999dd' THEN a.answer_text END) AS "Rejected Production (in MT)",
+      MAX(CASE WHEN q.question_id = '4306598c-6ac1-4572-a226-ac3263555efc' THEN a.answer_text END) AS "Reprocess Material (in MT)"
     FROM swp.submissions s
     JOIN swp.users u1 ON s.requested_by = u1.user_id
     JOIN swp.users u2 ON s.authorizer = u2.user_id
     LEFT JOIN swp.questions q ON q.form_id = s.form_id
     LEFT JOIN swp.answers a ON a.submission_id = s.submission_id AND a.question_id = q.question_id
-    WHERE s.form_id = 'f5fa7297-62f1-4bae-99b7-f66276f257a6'
-      AND s.status = 'approved'
+    WHERE s.form_id = 'dc5e9e79-87ca-44c8-b1f6-064b98227eb2'
+    AND s.status = 'approved'
     GROUP BY s.submission_id, s.start_date, s.start_time, s.end_date, s.end_time, s.status, u1.first_name, u1.last_name, u2.first_name, u2.last_name
     ORDER BY s.start_date;
   `;
