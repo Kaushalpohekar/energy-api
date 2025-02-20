@@ -7,9 +7,9 @@ const dbConfig = {
   // user: 'mysql',
   // password: 'sense!123',
   // database: 'tms'
-  host: 'sl02-mysql.mysql.database.azure.com',
+  host: 'data.senselive.in',
   user: 'senselive',
-  password: 'SenseLive@2030',
+  password: 'SenseLive@2025',
   database: 'tms',
   ssl: { rejectUnauthorized: false },
 };

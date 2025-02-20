@@ -11,11 +11,12 @@ const options = {
 
 const topic = 'MQTT/kapilansh';
 const dbConfig = {
-  host: 'pgsql.senselive.in',
+  host: 'data.senselive.in',
   user: 'senselive',
-  password: 'SenseLive',
-  database: 'ems',
+  password: 'SenseLive@2025',
+  database: 'senselive_db',
   port: 5432,
+  ssl: { rejectUnauthorized: false },
 };
 // const dbConfig = {
 //   host: '3.110.101.216',
