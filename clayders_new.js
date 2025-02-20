@@ -3,10 +3,10 @@ const cron = require('cron');
 
 // Destination Database Connection
 const sourcePool = new Pool({
-  host: 'senselive.postgres.database.azure.com',
-  user: 'kaushal',
-  password: 'Kaushal@123',
-  database: 'ems',
+  host: 'data.senselive.in',
+  user: 'senselive',
+  password: 'SenseLive@2025',
+  database: 'senselive_db',
   port: 5432,
   ssl: { rejectUnauthorized: false },
 });
