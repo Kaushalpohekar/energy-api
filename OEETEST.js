@@ -31,7 +31,7 @@ const mqttClient = mqtt.connect(broker, options);
 
 mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
-  
+
   mqttClient.subscribe('machine/data/WIRESIMULATION', (error) => {
     if (error) {
       console.error('Error subscribing to topic:', error);
@@ -43,32 +43,29 @@ mqttClient.on('connect', () => {
 
 mqttClient.on('message', (topic, message) => {
   try {
-    const data = JSON.parse(message);
-
-    console.log('Data Collected For Device', data.DeviceUID);
+    const messageStr = message.toString();
+    const jsonData = JSON.parse(messageStr);
 
     const insertQuery = `INSERT INTO oee.device_data (DeviceUID, Timestamp, data) 
                          VALUES ($1, NOW(), $2)`;
 
     const insertValues = [
-      data.DeviceUID || 'OEETEST',
-      message,
+      jsonData.DeviceUID || 'OEETEST',
+      JSON.stringify(jsonData)
     ];
 
-    if (data) {
-      pgClient2.query(insertQuery, insertValues)
-        .then(() => {
-          console.log('Data inserted into PostgreSQL for DeviceUID:');
-        })
-        .catch((error) => {
-          console.error('Error inserting data into PostgreSQL', error);
-        });
-    } else {
-      console.log('Data is missing DeviceUID, not inserted');
-    }
+    pgClient2.query(insertQuery, insertValues)
+      .then(() => {
+        console.log('Data inserted into PostgreSQL:', jsonData.DeviceUID);
+      })
+      .catch((error) => {
+        console.error('PostgreSQL Insert Error:', error);
+      });
+
   } catch (error) {
-    console.error('Error processing message:', error);
+    console.error('Invalid JSON Format:', error);
   }
+
 });
 
 mqttClient.on('error', (error) => {
