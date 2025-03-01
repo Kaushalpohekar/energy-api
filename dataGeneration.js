@@ -451,7 +451,7 @@ client.on('connect', () => {
         console.log('Data successfully published', JSON.stringify(data));
       }
     });
-  }, 10 * 1000);
+  }, 5* 60 * 1000);
 });
 
 client.on('error', (err) => {
