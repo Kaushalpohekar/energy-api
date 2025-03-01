@@ -43,8 +43,26 @@ mqttClient.on('connect', () => {
 
 mqttClient.on('message', (topic, message) => {
   try {
-    const messageStr = message.toString();
-    const jsonData = JSON.parse(messageStr);
+    if (!message || message.length === 0) {
+      console.warn('Received empty message, skipping processing.');
+      return;
+    }
+
+    const messageStr = message.toString().trim(); // Ensure no leading/trailing spaces
+    console.log('Received MQTT message:', messageStr); // Debugging
+
+    let jsonData;
+    try {
+      jsonData = JSON.parse(messageStr);
+    } catch (parseError) {
+      console.error('JSON Parsing Error:', parseError.message);
+      return;
+    }
+
+    if (!jsonData || typeof jsonData !== 'object') {
+      console.warn('Parsed JSON is not an object, skipping insertion.');
+      return;
+    }
 
     const insertQuery = `INSERT INTO oee.device_data (DeviceUID, Timestamp, data) 
                          VALUES ($1, NOW(), $2)`;
@@ -63,9 +81,8 @@ mqttClient.on('message', (topic, message) => {
       });
 
   } catch (error) {
-    console.error('Invalid JSON Format:', error);
+    console.error('Unexpected Error Processing MQTT Message:', error);
   }
-
 });
 
 mqttClient.on('error', (error) => {
