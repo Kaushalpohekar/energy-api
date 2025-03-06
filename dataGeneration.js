@@ -254,7 +254,7 @@ client.on('connect', () => {
         console.log('Data successfully published');
       }
     });
-  }, 2500); // Publish every 2.5 seconds
+  }, 5 * 60* 1000); // Publish every 2.5 seconds
 });
 
 // Handle errors
