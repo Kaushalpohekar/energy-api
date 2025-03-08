@@ -49,7 +49,7 @@ mqttClient.on('message', (topic, message) => {
     }
 
     const messageStr = message.toString().trim(); // Ensure no leading/trailing spaces
-    console.log('Received MQTT message:', messageStr); // Debugging
+    //console.log('Received MQTT message:', messageStr); // Debugging
 
     let jsonData;
     try {
