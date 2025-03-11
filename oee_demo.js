@@ -35,7 +35,7 @@ async function migrateData() {
       await sourceClient.query(insertQuery, ['OEETEST', row.data]);
 
       console.log(`Inserted record ID: ${row.id} with current timestamp`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 300000));
     }
 
     console.log("Migration completed!");
