@@ -11,6 +11,7 @@ const pgConfig2 = {
   database: 'senselive_db',
   port: 5432,
   ssl: { rejectUnauthorized: false },
+  statement_timeout: 5000,
 };
 
 const pgClient2 = new Client(pgConfig2);
@@ -21,11 +22,39 @@ pgClient2.connect((err) => {
     return;
   }
   console.log('Connected to PostgreSQL database');
+  startKeepAlive();
 });
+
+function startKeepAlive() {
+  const keepAliveInterval = 60000; // 60 seconds
+  setInterval(async () => {
+    try {
+      await pgClient2.query('SELECT 1');
+    } catch (error) {
+      try {
+        await pgClient2.end();
+      } catch {}
+      
+      let retries = 0;
+      const reconnect = async () => {
+        try {
+          await pgClient2.connect();
+        } catch {
+          retries++;
+          const delay = Math.min(60000, 5000 * retries);
+          setTimeout(reconnect, delay);
+        }
+      };
+      reconnect();
+    }
+  }, keepAliveInterval);
+}
+
 
 const options = {
   username: 'Sense2023',
   password: 'sense123',
+  reconnectPeriod: 5000,
 };
 
 const mqttClient = mqtt.connect(broker, options);
@@ -53,6 +82,10 @@ mqttClient.on('message', (topic, message) => {
       data = JSON.parse(message.toString());
     } catch (error) {
       console.error(`Invalid JSON format received on topic: ${topic}, message: ${message}`);
+      return;
+    }
+
+    if (data === null || typeof data !== 'object') {
       return;
     }
 
