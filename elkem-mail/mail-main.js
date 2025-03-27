@@ -86,7 +86,7 @@ const fetchDeviceData = async () => {
         const { rows: latestEntries } = await sourcePool.query(latestQuery);
 
         const formattedData = latestEntries.map(entry => {
-            const utcDate = new Date(entry.timestamp.getTime() + 5.5 * 60 * 60 * 1000); // Add 5:30 offset
+            const utcDate = new Date(entry.timestamp.getTime());
             const istDate = new Date(utcDate.getTime() + 5.5 * 60 * 60 * 1000); // Add 5:30 offset
             const deviceInfo = deviceNameMap[entry.deviceuid] || { name: entry.deviceuid, type: 'Unknown' };
 
