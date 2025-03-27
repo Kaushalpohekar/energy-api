@@ -126,7 +126,7 @@ async function sendAlert(data) {
 
             const mailOptions = {
                 from: "donotreplysenselive@gmail.com",
-                to: ['kpohekar19@gmail.com', 'abhijeet.bhoyar@senselive.io'],
+                to: ['kpohekar19@gmail.com', 'abhijeet.bhoyar@senselive.io', 'shivani.francis@elkem.com', 'pradip.h.nikam@elkem.com', 'sarvan.rathi@elkem.com', 'murlidhar.w.lapkale@elkem.com'],
                 subject: `Daily Report for Water Management`,
                 html: emailHtml,
             };
@@ -144,14 +144,14 @@ async function sendAlert(data) {
     });
 }
 
-// cron.schedule('0 10 * * *', () => {
-//     fetchDeviceData();
-// }, {
-//     timezone: "Asia/Kolkata"
-// });
-
-cron.schedule('*/10 * * * *', () => {
+cron.schedule('0 10 * * *', () => {
     fetchDeviceData();
 }, {
     timezone: "Asia/Kolkata"
 });
+
+// cron.schedule('*/10 * * * *', () => {
+//     fetchDeviceData();
+// }, {
+//     timezone: "Asia/Kolkata"
+// });
