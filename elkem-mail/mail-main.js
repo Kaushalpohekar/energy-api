@@ -126,7 +126,7 @@ async function sendAlert(data) {
 
             const mailOptions = {
                 from: "donotreplysenselive@gmail.com",
-                to: `kpohekar19@gmail.com`,
+                to: ['kpohekar19@gmail.com', 'abhijeet.bhoyar@senselive.io'],
                 subject: `Daily Report for Water Management`,
                 html: emailHtml,
             };
