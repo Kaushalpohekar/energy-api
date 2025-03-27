@@ -101,7 +101,7 @@ const fetchDeviceData = async () => {
             };
         });
 
-        console.log(formattedData);
+        // console.log(formattedData);
         sendAlert(formattedData);
 
     } catch (error) {
@@ -144,7 +144,13 @@ async function sendAlert(data) {
     });
 }
 
-cron.schedule('0 10 * * *', () => {
+// cron.schedule('0 10 * * *', () => {
+//     fetchDeviceData();
+// }, {
+//     timezone: "Asia/Kolkata"
+// });
+
+cron.schedule('*/10 * * * *', () => {
     fetchDeviceData();
 }, {
     timezone: "Asia/Kolkata"
