@@ -79,7 +79,7 @@ const dbFieldAliases = {
     pf_1: ['PF_A', 'pf_a', 'PowerFactor_A', 'power_factor_a', 'Power_Factor_A', 'pf-a', 'PF-A', 'PhaseA_PF', 'pf1', 'pf_1'],
     pf_2: ['PF_B', 'pf_b', 'PowerFactor_B', 'power_factor_b', 'Power_Factor_B', 'pf-b', 'PF-B', 'PhaseB_PF', 'pf2', 'pf_2'],
     pf_3: ['PF_C', 'pf_c', 'PowerFactor_C', 'power_factor_c', 'Power_Factor_C', 'pf-c', 'PF-C', 'PhaseC_PF', 'pf3', 'pf_3'],
-    pf: ['PF_Avg', 'pf_avg', 'PFAVG', 'Average_PF', 'AvgPF', 'avg_pf', 'PowerFactor_Avg', 'Power_Factor_Total', 'pf_total', 'pf'],
+    pf: ['PF_Avg', 'PF_avg','pf_avg', 'PFAVG', 'Average_PF', 'AvgPF', 'avg_pf', 'PowerFactor_Avg', 'Power_Factor_Total', 'pf_total', 'pf'],
     freq: ['F', 'f', 'Frequency', 'frequency', 'Freq', 'Freq_Hz', 'frequency_hz', 'Hz', 'hz', 'freq'],
     voltage_12: ['V_A-B', 'V_A_B', 'VA-B', 'VA_B', 'Voltage_AB', 'Voltage_A_B', 'LineVoltage_AB', 'voltage_ab', 'voltage_12'],
     voltage_23: ['V_B-C', 'V_B_C', 'VB-C', 'VB_C', 'Voltage_BC', 'Voltage_B_C', 'LineVoltage_BC', 'voltage_bc', 'voltage_23'],
