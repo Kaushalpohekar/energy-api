@@ -142,15 +142,15 @@ const dbFieldAliases = {
     max_kw: ['kW_Peak_D', 'KW_Peak_D', 'kw_peak_d', 'KW-PEAK-D', 'MaxKW', 'PeakKW', 'max_kw'],
     max_kvar: ['kVAR_Peak_D', 'KVAR_Peak_D', 'kvar_peak_d', 'KVAR-PEAK-D', 'MaxKVAR', 'PeakKVAR', 'max_kvar'],
     max_kva: ['kVA_Pk_D', 'KVA_Pk_D', 'kva_pk_d', 'KVA-PK-D', 'MaxKVA', 'PeakKVA', 'max_kva'],
-    thd_i1: ['thd_i_a','THD_I_A', 'THD-IA', 'thd_i_a', 'ThdIA', 'THDI_A', 'THDIA', 'THDCurrentA', 'thd_i1', 'THD I_A', 'THD I A', 'THD_I_A', 'THD-I-A', 'thd i a', 'thd-i-a', 'thd i_a', 'thd-i_a', 'thdcurrenta'],
-    thd_i2: ['thd_i_b','THD_I_B', 'THD-IB', 'thd_i_b', 'ThdIB', 'THDI_B', 'THDIB', 'THDCurrentB', 'thd_i2', 'THD I_B', 'THD I B', 'THD_I_B', 'THD-I-B', 'thd i b', 'thd-i-b', 'thd i_b', 'thd-i_b', 'thdcurrentb'],
-    thd_i3: ['thd_i_c','THD_I_C', 'THD-IC', 'thd_i_c', 'ThdIC', 'THDI_C', 'THDIC', 'THDCurrentC', 'thd_i3', 'THD I_C', 'THD I C', 'THD_I_C', 'THD-I-C', 'thd i c', 'thd-i-c', 'thd i_c', 'thd-i_c', 'thdcurrentc'],
-    thd_v12: ['thd_v_a','THD_V_A-B', 'THD-V-AB', 'THDVAB', 'THDVoltageAB', 'thd_v_ab', 'thd_v12', 'THD V_A-B', 'THD V A-B', 'THD V A B', 'THD_V_A_B', 'THD-V-A-B', 'thd v a b', 'thd-v-a-b', 'thd v_a_b', 'thd-v_a_b', 'thdvoltageab'],
-    thd_v23: ['thd_v_b','THD_V_B-C', 'THD-V-BC', 'THDVBC', 'THDVoltageBC', 'thd_v_bc', 'thd_v23', 'THD V_B-C', 'THD V B-C', 'THD V B C', 'THD_V_B_C', 'THD-V-B-C', 'thd v b c', 'thd-v-b-c', 'thd v_b_c', 'thd-v_b_c', 'thdvoltagebc'],
-    thd_v31: ['thd_v_c','THD_V_C-A', 'THD-V-CA', 'THDVCA', 'THDVoltageCA', 'thd_v_ca', 'thd_v31', 'THD V_C-A', 'THD V C-A', 'THD V C A', 'THD_V_C_A', 'THD-V-C-A', 'thd v c a', 'thd-v-c-a', 'thd v_c_a', 'thd-v_c_a', 'thdvoltageca'],
-    thd_v1n: ['thd_v_1','THD_V_A-N', 'THD-V-AN', 'THDVAN', 'THDVoltageAN', 'thd_v_an', 'thd_v1n', 'THD V_A-N', 'THD V A-N', 'THD V A N', 'THD V_A_N', 'THD-V-A-N', 'thd v_a-n', 'thd v a-n', 'thd v a n', 'thd v_a_n', 'thd-v-a-n', 'thdvan', 'thd voltage an', 'thd voltage_a_n', 'thd-voltage-a-n'],
-    thd_v2n: ['thd_v_2','THD_V_B-N', 'THD-V-BN', 'THD_VBN', 'THDVoltageBN', 'thd_v_bn', 'thd_v2n', 'THD V_B-N', 'THD V B-N', 'THD V B N', 'THD V_B_N', 'THD-V-B-N', 'thd v_b-n', 'thd v b-n', 'thd v b n', 'thd v_b_n', 'thd-v-b-n', 'thdvbn', 'thd voltage bn', 'thd voltage_b_n', 'thd-voltage-b-n'],
-    thd_v3n: ['thd_v_3','THD_V_C-N', 'THD-V-CN', 'THDVCN', 'THDVoltageCN', 'thd_v_cn', 'thd_v3n', 'THD V_C-N', 'THD V C-N', 'THD V C N', 'THD V_C_N', 'THD-V-C-N', 'thd v_c-n', 'thd v c-n', 'thd v c n', 'thd v_c_n', 'thd-v-c-n', 'thdvcn', 'thd voltage cn', 'thd voltage_c_n', 'thd-voltage-c-n'],
+    thd_i1: ['thd_i_a', 'THD_I_A', 'THD-IA', 'thd_i_a', 'ThdIA', 'THDI_A', 'THDIA', 'THDCurrentA', 'thd_i1', 'THD I_A', 'THD I A', 'THD_I_A', 'THD-I-A', 'thd i a', 'thd-i-a', 'thd i_a', 'thd-i_a', 'thdcurrenta'],
+    thd_i2: ['thd_i_b', 'THD_I_B', 'THD-IB', 'thd_i_b', 'ThdIB', 'THDI_B', 'THDIB', 'THDCurrentB', 'thd_i2', 'THD I_B', 'THD I B', 'THD_I_B', 'THD-I-B', 'thd i b', 'thd-i-b', 'thd i_b', 'thd-i_b', 'thdcurrentb'],
+    thd_i3: ['thd_i_c', 'THD_I_C', 'THD-IC', 'thd_i_c', 'ThdIC', 'THDI_C', 'THDIC', 'THDCurrentC', 'thd_i3', 'THD I_C', 'THD I C', 'THD_I_C', 'THD-I-C', 'thd i c', 'thd-i-c', 'thd i_c', 'thd-i_c', 'thdcurrentc'],
+    thd_v12: ['thd_v_a', 'THD_V_A-B', 'THD-V-AB', 'THDVAB', 'THDVoltageAB', 'thd_v_ab', 'thd_v12', 'THD V_A-B', 'THD V A-B', 'THD V A B', 'THD_V_A_B', 'THD-V-A-B', 'thd v a b', 'thd-v-a-b', 'thd v_a_b', 'thd-v_a_b', 'thdvoltageab'],
+    thd_v23: ['thd_v_b', 'THD_V_B-C', 'THD-V-BC', 'THDVBC', 'THDVoltageBC', 'thd_v_bc', 'thd_v23', 'THD V_B-C', 'THD V B-C', 'THD V B C', 'THD_V_B_C', 'THD-V-B-C', 'thd v b c', 'thd-v-b-c', 'thd v_b_c', 'thd-v_b_c', 'thdvoltagebc'],
+    thd_v31: ['thd_v_c', 'THD_V_C-A', 'THD-V-CA', 'THDVCA', 'THDVoltageCA', 'thd_v_ca', 'thd_v31', 'THD V_C-A', 'THD V C-A', 'THD V C A', 'THD_V_C_A', 'THD-V-C-A', 'thd v c a', 'thd-v-c-a', 'thd v_c_a', 'thd-v_c_a', 'thdvoltageca'],
+    thd_v1n: ['thd_v_1', 'THD_V_A-N', 'THD-V-AN', 'THDVAN', 'THDVoltageAN', 'thd_v_an', 'thd_v1n', 'THD V_A-N', 'THD V A-N', 'THD V A N', 'THD V_A_N', 'THD-V-A-N', 'thd v_a-n', 'thd v a-n', 'thd v a n', 'thd v_a_n', 'thd-v-a-n', 'thdvan', 'thd voltage an', 'thd voltage_a_n', 'thd-voltage-a-n'],
+    thd_v2n: ['thd_v_2', 'THD_V_B-N', 'THD-V-BN', 'THD_VBN', 'THDVoltageBN', 'thd_v_bn', 'thd_v2n', 'THD V_B-N', 'THD V B-N', 'THD V B N', 'THD V_B_N', 'THD-V-B-N', 'thd v_b-n', 'thd v b-n', 'thd v b n', 'thd v_b_n', 'thd-v-b-n', 'thdvbn', 'thd voltage bn', 'thd voltage_b_n', 'thd-voltage-b-n'],
+    thd_v3n: ['thd_v_3', 'THD_V_C-N', 'THD-V-CN', 'THDVCN', 'THDVoltageCN', 'thd_v_cn', 'thd_v3n', 'THD V_C-N', 'THD V C-N', 'THD V C N', 'THD V_C_N', 'THD-V-C-N', 'thd v_c-n', 'thd v c-n', 'thd v c n', 'thd v_c_n', 'thd-v-c-n', 'thdvcn', 'thd voltage cn', 'thd voltage_c_n', 'thd-voltage-c-n'],
 };
 
 const fieldAliasMap = {};
@@ -231,17 +231,14 @@ mqttClient.on('message', (topic, message) => {
             }
 
             derivedFieldMap.forEach(({ target, source, transform }) => {
-                if (!data[target] && meterData[source] !== undefined) {
-                    const val = transform(meterData[source]);
+                const srcVal = data[source] ?? meterData[source];
+                if (srcVal !== undefined && srcVal !== null) {
+                    const val = transform(srcVal);
                     if (!isNaN(val)) {
-                        data[target] = val;
+                        data[target] = val; // Always overwrite with transformed value
+                        console.log(`Derived → ${target}: ${val} (from ${source}: ${srcVal})`);
                     }
                 }
-            });
-
-            console.log(`\n📦 Insertable fields for DeviceUID: ${data.device_uid || 'Unknown'}`);
-            dbColumns.forEach(col => {
-                console.log(`→ ${col}: ${data[col]}`);
             });
 
             const values = dbColumns.map(col => data[col] ?? null);
